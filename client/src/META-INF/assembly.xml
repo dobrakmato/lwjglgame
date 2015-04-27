@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    client - Multiplayer Java game engine.
+    Copyright (C) 2015 Matej Kormuth <http://www.github.com/dobrakmato>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<assembly>
+  <id>release</id>
+  <formats>
+    <format>zip</format>
+    <!-- For development -->
+    <format>dir</format>
+  </formats>
+  <files>
+    <file>
+      <source>target/${finalName}</source>
+      <outputDirectory>/</outputDirectory>
+    </file>
+  </files>
+
+  <fileSets>
+    <fileSet>
+      <directory>src/main/resources</directory>
+      <outputDirectory>/</outputDirectory>
+      <excludes>
+        <exclude>log4j.properties</exclude>
+      </excludes>
+    </fileSet>
+
+    <!-- LWJGL natives -->
+    <fileSet>
+      <directory>${natives}</directory>
+      <outputDirectory>${release.natives}</outputDirectory>
+      <includes>
+        <include>*.dll</include>
+        <include>*.so</include>
+        <include>*.jnilib</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>src/main/scripts</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>*.sh</include>
+        <include>*.bat</include>
+      </includes>
+      <filtered>true</filtered>
+      <fileMode>0755</fileMode>
+    </fileSet>
+
+    <fileSet>
+      <directory>src/main/defaults</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>*.xml</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+
+  <dependencySets>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <outputDirectory>lib</outputDirectory>
+      <scope>runtime</scope>
+      <excludes>
+        <exclude>*:natives-*</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
