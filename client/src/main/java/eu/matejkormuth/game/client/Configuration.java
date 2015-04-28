@@ -28,7 +28,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -42,8 +41,6 @@ public class Configuration {
     private float musicVolume = 0.75f;
     private float soundVolume = 1f;
     private float mouseSensitivity = 0.5f;
-    @XmlElementWrapper(name = "binding")
-    private KeyBinding[] binding;
 
     public Configuration() {
 
@@ -51,7 +48,7 @@ public class Configuration {
 
     public void save() {
         try {
-            JAXBContext ctx = JAXBContext.newInstance(Configuration.class, KeyBinding.class);
+            JAXBContext ctx = JAXBContext.newInstance(Configuration.class);
             Marshaller m = ctx.createMarshaller();
             m.marshal(this, new FileOutputStream(new File(CONFIGURATION_NAME)));
         } catch (JAXBException | FileNotFoundException e) {
@@ -61,7 +58,7 @@ public class Configuration {
 
     public static Configuration load() {
         try {
-            JAXBContext ctx = JAXBContext.newInstance(Configuration.class, KeyBinding.class);
+            JAXBContext ctx = JAXBContext.newInstance(Configuration.class);
             Unmarshaller u = ctx.createUnmarshaller();
             Object conf = u.unmarshal(new FileInputStream(new File(CONFIGURATION_NAME)));
             return (Configuration) conf;
@@ -116,14 +113,6 @@ public class Configuration {
 
     public void setMouseSensitivity(float mouseSensitivity) {
         this.mouseSensitivity = mouseSensitivity;
-    }
-
-    public KeyBinding[] getBindings() {
-        return this.binding;
-    }
-
-    public void setBindings(KeyBinding[] bindings) {
-        this.binding = bindings;
     }
 
 }

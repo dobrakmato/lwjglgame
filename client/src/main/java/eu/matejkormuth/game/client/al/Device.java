@@ -34,10 +34,10 @@ public class Device implements Disposable {
             log.info("Creating audio device with defaults to 44100Hz mixing @ 60Hz refresh.");
             AL.create();
 
-            log.info("Audio system vendor: {}", AL10.alGetString(AL10.AL_VENDOR));
-            log.info("Audio system version: {}", AL10.alGetString(AL10.AL_VERSION));
-            log.info("Audio system renderer: {}", AL10.alGetString(AL10.AL_RENDERER));
-            log.info("Audio system extensions: {}", AL10.alGetString(AL10.AL_EXTENSIONS));
+            log.info(" Audio system vendor: {}", AL10.alGetString(AL10.AL_VENDOR));
+            log.info(" Audio system version: {}", AL10.alGetString(AL10.AL_VERSION));
+            log.info(" Audio system renderer: {}", AL10.alGetString(AL10.AL_RENDERER));
+            log.debug(" Audio system extensions: {}", AL10.alGetString(AL10.AL_EXTENSIONS));
         } catch (LWJGLException e) {
             throw new RuntimeException(e);
         }

@@ -15,15 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.matejkormuth.game.client;
+package eu.matejkormuth.game.client.commands;
 
-public class CVarDefaults {
-    static void init(Application app) {
-        app.getCvar("displayHeight").setVal(1280);
-        app.getCvar("displayWidth").setVal(720);
-        app.getCvar("fullscreen").setVal(true);
-        app.getCvar("musicVolume").setVal(0.75f);
-        app.getCvar("soundVolume").setVal(1f);
-        app.getCvar("mouseSensitivity").setVal(0.5f);
+import eu.matejkormuth.game.client.Application;
+import eu.matejkormuth.game.shared.console.ConsoleCommand;
+
+public class ShutdownCommand extends ConsoleCommand {
+
+    public ShutdownCommand() {
+        super("shutdown");
+        this.description = "Shuts down the client disconnecting from current game.";
+        this.usage = "shutdown";
     }
+
+    @Override
+    public void execute(String[] args) {
+        Application.getApplication().shutdown();
+    }
+
 }

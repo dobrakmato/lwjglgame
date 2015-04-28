@@ -20,12 +20,12 @@ package eu.matejkormuth.game.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.matejkormuth.game.client.commands.ShutdownCommand;
 import eu.matejkormuth.game.shared.console.StdInConsole;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Application {
 
@@ -40,32 +40,39 @@ public class Application {
         return app;
     }
 
-    private Map<String, CVar> cvars;
     private StdInConsole console;
+    private Window window;
 
     public Application() {
         app = this;
-        this.cvars = new HashMap<>();
-        CVarDefaults.init(this);
     }
 
     public void start() {
         log.info("Client started at {}", new SimpleDateFormat().format(new Date()));
 
+        // Enable LWJGL debug.
+        System.setProperty("org.lwjgl.util.Debug", "true");
+
+        // Prepare content loading.
+        Content.setRoot(new File(".").getAbsoluteFile().toPath());
+
         // Start console reader.
         this.console = new StdInConsole();
+        this.console.getDispatcher().register(new ShutdownCommand());
+        this.console.start();
+
+        // Create window.
+        this.window = new Window();
+        this.window.doUpdate();
     }
 
     public void shutdown() {
         this.console.shutdown();
+        this.window.shutdown();
     }
 
-    public CVar getCvar(String name) {
-        if (cvars.containsKey(name)) {
-            return cvars.get(name);
-        } else {
-            return cvars.put(name, new CVar(name));
-        }
+    public StdInConsole getConsole() {
+        return console;
     }
 
 }

@@ -25,6 +25,8 @@ import eu.matejkormuth.game.shared.console.StdInConsole;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class Application {
     private static final Logger log = LoggerFactory.getLogger(Application.class);
@@ -38,6 +40,7 @@ public class Application {
         return app;
     }
 
+    private ScheduledExecutorService scheduler;
     private WorldServer world;
     private StdInConsole console;
 
@@ -46,16 +49,24 @@ public class Application {
     }
 
     public void start() {
+        scheduler = Executors.newScheduledThreadPool(1);
+        
         log.info("Server started at {}", new SimpleDateFormat().format(new Date()));
 
         console = new StdInConsole();
         console.getDispatcher().register(new ShutdownCommand());
         console.start();
+        
+        world = new WorldServer();
+        world.start();
     }
 
     public void shutdown() {
         log.info("Shutting down...");
         console.shutdown();
+        world.shutdown();
+        // Shutdown scheduler.
+        scheduler.shutdown();
     }
 
     public StdInConsole getConsole() {
@@ -64,6 +75,10 @@ public class Application {
 
     public WorldServer getWorldServer() {
         return world;
+    }
+    
+    public ScheduledExecutorService getScheduler() {
+        return scheduler;
     }
 
 }

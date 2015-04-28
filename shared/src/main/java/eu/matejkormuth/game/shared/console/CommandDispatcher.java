@@ -48,7 +48,7 @@ public class CommandDispatcher {
         String[] parts = line.split(" ");
 
         if (parts[0].equalsIgnoreCase("help") && parts.length == 2) {
-            if (commands.containsKey(parts[0])) {
+            if (commands.containsKey(parts[1])) {
                 displayHelp(parts[1]);
             } else {
                 // No such command.
@@ -66,9 +66,9 @@ public class CommandDispatcher {
 
     private void displayHelp(String string) {
         ConsoleCommand cmd = commands.get(string);
-        log.error("Command: ", cmd.getName());
-        log.error("Description: ", cmd.getDescription());
-        log.error("Usage: ", cmd.getUsage());
+        log.info("Command: ", cmd.getName());
+        log.info("Description: ", cmd.getDescription());
+        log.info("Usage: ", cmd.getUsage());
     }
 
     private void dispatch0(String[] parts) {

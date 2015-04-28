@@ -15,31 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.matejkormuth.game.client;
+package eu.matejkormuth.game.client.gl;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import javax.vecmath.Vector3f;
 
-@XmlType
-@XmlAccessorType(XmlAccessType.FIELD)
-public class KeyBinding {
-    private String bind;
-    private int key;
+public class FloatVertex {
+    
+    // Size of this vertex is 3 floating point numbers.
+    public static final int SIZE = 3;
 
-    public KeyBinding() {
+    private float[] data = new float[SIZE];
+    
+    public FloatVertex(Vector3f pos) {
+        this.setPosition(pos);
     }
-
-    public KeyBinding(String bind, int key) {
-        this.bind = bind;
-        this.key = key;
+    
+    public void setPosition(Vector3f pos) {
+        this.data[0] = pos.x;
+        this.data[1] = pos.y;
+        this.data[2] = pos.z;
     }
-
-    public String getBind() {
-        return bind;
-    }
-
-    public int getKey() {
-        return key;
+    
+    public float[] getData() {
+        return data;
     }
 }

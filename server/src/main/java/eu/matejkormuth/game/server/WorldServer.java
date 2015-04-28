@@ -17,29 +17,36 @@
  */
 package eu.matejkormuth.game.server;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eu.matejkormuth.game.server.gameobjects.SWorld;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WorldServer {
 
+    private static final Logger log = LoggerFactory.getLogger(WorldServer.class);
     private static final AtomicInteger id = new AtomicInteger();
 
     private SWorld world;
     private Thread updateThread;
+    private TPSMeter tpsMeter;
     private boolean running;
-    private int tps = 66;
+    private int targetTps = 66;
 
     public WorldServer() {
+        this.tpsMeter = new TPSMeter(this.targetTps);
         this.world = new SWorld();
-        this.updateThread = new Thread(this::update, "WorldServer-" + id.incrementAndGet());
+        this.updateThread = new Thread(this::doUpdate, "WorldServer-" + id.incrementAndGet());
     }
 
-    private void update() {
+    private void doUpdate() {
         // Target length of one update in milliseconds.
-        final double targetLengthMs = 1000 / this.tps;
+        final double targetLengthMs = 1000 / this.targetTps;
         long lastStart, lastEnd = System.nanoTime();
         while (running) {
+            this.tpsMeter.tickOccured();
             lastStart = System.nanoTime();
             // Time elapsed since last update.
             this.world.update((lastStart - lastEnd) / 1000000000f);
@@ -55,16 +62,23 @@ public class WorldServer {
     }
 
     public void start() {
+        log.info("Starting up WorldServer...");
         this.running = true;
         this.updateThread.start();
     }
 
     public void shutdown() {
+        log.info("Shutting down WorldServer...");
+        this.tpsMeter.disable();
         running = false;
     }
 
-    public int getTPS() {
-        return tps;
+    public int getTargetTPS() {
+        return targetTps;
+    }
+
+    public int getEffectiveTPS() {
+        return tpsMeter.getLastTPS();
     }
 
     public SWorld getWorld() {
