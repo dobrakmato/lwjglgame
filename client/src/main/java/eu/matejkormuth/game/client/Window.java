@@ -67,7 +67,7 @@ public class Window {
         this.mouse = new MouseInput();
 
         // Initialize renderer.
-        this.renderer = new Renderer();
+        this.renderer = new Renderer(this);
     }
 
     private void setDefaults() throws LWJGLException {
@@ -92,6 +92,8 @@ public class Window {
             // Read input.
             this.keyboard.update();
             this.mouse.update();
+            // Update.
+            this.renderer.update();
             // Swap buffers.
             Display.update();
             Display.sync(60);
@@ -180,6 +182,14 @@ public class Window {
 
     public void setLocation(int x, int y) {
         Display.setLocation(x, y);
+    }
+    
+    public KeyboardInput getKeyboard() {
+        return keyboard;
+    }
+    
+    public MouseInput getMouse() {
+        return mouse;
     }
 
 }

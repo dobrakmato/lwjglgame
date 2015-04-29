@@ -1,28 +1,28 @@
 /**
- * shared - Multiplayer Java game engine.
- * Copyright (c) 2015, Matej Kormuth <http://www.github.com/dobrakmato>
- * All rights reserved.
+ * shared - Multiplayer Java game engine. Copyright (c) 2015, Matej Kormuth
+ * <http://www.github.com/dobrakmato> All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 package eu.matejkormuth.game.shared.math;
 
@@ -181,18 +181,18 @@ public class Matrix4f {
         return this;
     }
 
-    public Matrix4f initProjection(float fov, float width, float height, float zNear, float zFar) {
+    public Matrix4f initPerspective(float fov, float width, float height, float zNear, float zFar) {
         float ar = width / height;
         float tanHalfFOV = (float) Math.tan(Math.toRadians(fov / 2));
         float zRange = zNear - zFar;
 
-        m[0][0] = 1 / (tanHalfFOV * ar);
+        m[0][0] = 1f / (tanHalfFOV * ar);
         m[0][1] = 0;
         m[0][2] = 0;
         m[0][3] = 0;
 
         m[1][0] = 0;
-        m[1][1] = 1 / tanHalfFOV;
+        m[1][1] = 1f / tanHalfFOV;
         m[1][2] = 0;
         m[1][3] = 0;
 
@@ -203,8 +203,41 @@ public class Matrix4f {
 
         m[3][0] = 0;
         m[3][1] = 0;
-        m[3][2] = 0;
+        m[3][2] = 1;
         m[3][3] = 0;
+
+        return this;
+    }
+
+    public Matrix4f initCamera(Vector3f forward, Vector3f up) {
+        Vector3f f = new Vector3f(forward);
+        f.normalize();
+        
+        Vector3f r = new Vector3f(up);
+        r.normalize();
+        r = r.cross(f);
+        
+        Vector3f u = f.cross(r);
+
+        m[0][0] = r.x;
+        m[0][1] = r.y;
+        m[0][2] = r.z;
+        m[0][3] = 0;
+
+        m[1][0] = u.x;
+        m[1][1] = u.y;
+        m[1][2] = u.z;
+        m[1][3] = 0;
+
+        m[2][0] = f.x;
+        m[2][1] = f.y;
+        m[2][2] = f.z;
+        m[2][3] = 0;
+
+        m[3][0] = 0;
+        m[3][1] = 0;
+        m[3][2] = 0;
+        m[3][3] = 1;
 
         return this;
     }

@@ -26,6 +26,7 @@
  */
 package eu.matejkormuth.game.shared.physics;
 
+import eu.matejkormuth.game.shared.Updatable;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
 public interface DynamicsWorld extends Updatable {
