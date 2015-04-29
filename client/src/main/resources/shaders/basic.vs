@@ -7,10 +7,10 @@ layout (location = 0) in vec3 position;
 out vec4 color;
 
 // Uniforms.
-uniform float uniformFloat;
+uniform mat4 transform;
 
 // Main method.
 void main() {
-	color = vec4(clamp(position, 0.0, uniformFloat), 1);
-	gl_Position = vec4(position, 1);
+	color = transform * vec4(clamp(position, 0.0, 1.0), 1);
+	gl_Position = transform * vec4(position, 1);
 }

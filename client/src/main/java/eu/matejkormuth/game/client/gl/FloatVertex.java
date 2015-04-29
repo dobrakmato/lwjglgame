@@ -17,7 +17,7 @@
  */
 package eu.matejkormuth.game.client.gl;
 
-import javax.vecmath.Vector3f;
+import eu.matejkormuth.game.shared.math.Vector3f;
 
 public class FloatVertex {
     

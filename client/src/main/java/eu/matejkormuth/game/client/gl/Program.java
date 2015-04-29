@@ -23,12 +23,11 @@ import static org.lwjgl.opengl.GL20.*;
 import org.lwjgl.BufferUtils;
 
 import eu.matejkormuth.game.shared.Disposable;
+import eu.matejkormuth.game.shared.math.Matrix4f;
+import eu.matejkormuth.game.shared.math.Vector3f;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
 import java.nio.FloatBuffer;
-
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
 
 public class Program implements Disposable {
 
@@ -112,25 +111,10 @@ public class Program implements Disposable {
     private FloatBuffer createMatrixBuffer(Matrix4f matrix) {
         FloatBuffer buff = BufferUtils.createFloatBuffer(4 * 4);
 
-        buff.put(matrix.m00);
-        buff.put(matrix.m01);
-        buff.put(matrix.m02);
-        buff.put(matrix.m03);
-
-        buff.put(matrix.m10);
-        buff.put(matrix.m11);
-        buff.put(matrix.m12);
-        buff.put(matrix.m13);
-
-        buff.put(matrix.m20);
-        buff.put(matrix.m21);
-        buff.put(matrix.m22);
-        buff.put(matrix.m23);
-
-        buff.put(matrix.m30);
-        buff.put(matrix.m31);
-        buff.put(matrix.m32);
-        buff.put(matrix.m33);
+        buff.put(matrix.m[0]);
+        buff.put(matrix.m[1]);
+        buff.put(matrix.m[2]);
+        buff.put(matrix.m[3]);
 
         buff.flip();
         return buff;
@@ -138,14 +122,14 @@ public class Program implements Disposable {
 
     public void setUniform(String uniform, FloatBuffer matrix4) {
         if (this.uniformLocations.containsKey(uniform)) {
-            glUniformMatrix4(this.uniformLocations.get(uniform), false, matrix4);
+            glUniformMatrix4(this.uniformLocations.get(uniform), true, matrix4);
         } else {
             int location = glGetUniformLocation(program, uniform);
             if (location == -1) {
                 throw new IllegalArgumentException("Location of uniform '" + uniform + "' cloud not be found!");
             }
             uniformLocations.put(uniform, location);
-            glUniformMatrix4(location, false, matrix4);
+            glUniformMatrix4(location, true, matrix4);
         }
     }
 

@@ -17,11 +17,19 @@
  */
 package eu.matejkormuth.game.client;
 
+import eu.matejkormuth.game.client.gl.FloatVertex;
+import eu.matejkormuth.game.client.gl.Mesh;
+import eu.matejkormuth.game.shared.math.Vector3f;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Content {
 
@@ -39,6 +47,35 @@ public class Content {
 
     public static <T> T load(Path path) {
         return null;
+    }
+
+    public static Mesh loadObj(String first, String... more) {
+        return loadObj(getPath(first, more));
+    }
+
+    private static Mesh loadObj(Path path) {
+        try {
+            List<FloatVertex> vertices = new ArrayList<>();
+            TIntList indices = new TIntArrayList();
+
+            for (String line : Files.readAllLines(path)) {
+                String[] tokens = line.split(" ");
+                if (tokens.length == 0 || tokens[0].startsWith("#")) {
+                    continue;
+                } else if (tokens[0].equals("v")) {
+                    vertices.add(new FloatVertex(new Vector3f(Float.valueOf(tokens[1]), Float.valueOf(tokens[2]), Float
+                            .valueOf(tokens[3]))));
+                } else if (tokens[0].equals("f")) {
+                    indices.add(Integer.valueOf(tokens[1]) - 1);
+                    indices.add(Integer.valueOf(tokens[2]) - 1);
+                    indices.add(Integer.valueOf(tokens[3]) - 1);
+                }
+            }
+
+            return new Mesh(vertices.toArray(new FloatVertex[vertices.size()]), indices.toArray());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static byte[] readBinary(String first, String... more) {

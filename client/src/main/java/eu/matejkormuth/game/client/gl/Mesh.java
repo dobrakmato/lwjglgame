@@ -27,36 +27,48 @@ import org.lwjgl.BufferUtils;
 import eu.matejkormuth.game.shared.Disposable;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 public class Mesh implements Disposable {
-    private FloatVertex[] vertices;
-
+    private int indices;
     private int vbo;
     private int vao;
+    private int ibo;
 
-    // TODO: EBO
-
-    public Mesh(FloatVertex... vertices) {
-        this.vertices = vertices;
+    public Mesh(FloatVertex[] vertices, int[] indices) {
+        this.indices = indices.length;
 
         // Create VAO.
         vao = glGenVertexArrays();
         glBindVertexArray(vao);
 
+        // Create IBO.
+        ibo = glGenBuffers();
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, createIndicesBuffer(indices), GL_STATIC_DRAW);
+
         // Create VBO.
         vbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, createVerticesBuffer(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, createVerticesBuffer(vertices), GL_STATIC_DRAW);
 
         // Initialize attributes.
         initAttributes();
-        
+
         // Bind default VAO.
         glBindVertexArray(0);
 
     }
 
-    private FloatBuffer createVerticesBuffer() {
+    private IntBuffer createIndicesBuffer(int[] indices) {
+        IntBuffer buff = BufferUtils.createIntBuffer(indices.length);
+        buff.put(indices);
+        buff.flip();
+        return buff;
+    }
+
+    private FloatBuffer createVerticesBuffer(FloatVertex[] vertices) {
         FloatBuffer buff = BufferUtils.createFloatBuffer(vertices.length * FloatVertex.SIZE);
 
         for (FloatVertex vertex : vertices) {
@@ -72,23 +84,23 @@ public class Mesh implements Disposable {
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, false, Float.BYTES * FloatVertex.SIZE, 0);
     }
-    
+
     public void bind() {
         glBindVertexArray(vao);
     }
-    
+
     public void draw() {
         glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLES, 0, vertices.length);
+        // glDrawArrays(GL_TRIANGLES, 0, vertices);
+        glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
     }
-    
+
     @Override
     public void dispose() {
         glDeleteBuffers(vbo);
+        glDeleteBuffers(ibo);
         glDeleteVertexArrays(vao);
-        
-        vertices = null;
     }
 
 }

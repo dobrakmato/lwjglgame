@@ -30,7 +30,7 @@ public class ShutdownCommand extends ConsoleCommand {
 
     @Override
     public void execute(String[] args) {
-        Application.getApplication().shutdown();
+        Application.get().shutdown();
     }
 
 }

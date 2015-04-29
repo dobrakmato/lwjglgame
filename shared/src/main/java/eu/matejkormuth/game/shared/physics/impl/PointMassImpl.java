@@ -19,7 +19,7 @@ package eu.matejkormuth.game.shared.physics.impl;
 
 import eu.matejkormuth.game.shared.physics.PointMass;
 
-import javax.vecmath.Vector3f;
+import eu.matejkormuth.game.shared.math.Vector3f;
 
 public class PointMassImpl implements PointMass {
 

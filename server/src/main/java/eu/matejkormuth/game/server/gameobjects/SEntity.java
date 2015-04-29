@@ -22,7 +22,7 @@ import eu.matejkormuth.game.shared.gameobjects.World;
 import eu.matejkormuth.game.shared.physics.PointMass;
 import eu.matejkormuth.game.shared.physics.impl.PointMassImpl;
 
-import javax.vecmath.Vector3f;
+import eu.matejkormuth.game.shared.math.Vector3f;
 
 public class SEntity implements Entity, PointMass {
 

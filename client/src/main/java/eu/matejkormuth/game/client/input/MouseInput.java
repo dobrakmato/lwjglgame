@@ -20,17 +20,16 @@ package eu.matejkormuth.game.client.input;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 
+import eu.matejkormuth.game.shared.math.Vector2f;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
-
-import javax.vecmath.Vector2f;
 
 public class MouseInput {
 
     public static final int NUM_MOUSEBUTTONS = 5;
 
     private TIntList lastMouse = new TIntArrayList();
-    
+
     public MouseInput() {
         try {
             Mouse.create();
@@ -59,7 +58,7 @@ public class MouseInput {
     public boolean getMouseReleased(int button) {
         return !isButtonDown(button) && lastMouse.contains(button);
     }
-    
+
     public Vector2f getPosition() {
         return new Vector2f(Mouse.getX(), Mouse.getY());
     }

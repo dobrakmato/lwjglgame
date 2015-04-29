@@ -36,7 +36,7 @@ public class Application {
         new Application().start();
     }
 
-    public static Application getApplication() {
+    public static Application get() {
         return app;
     }
 
@@ -73,6 +73,10 @@ public class Application {
 
     public StdInConsole getConsole() {
         return console;
+    }
+    
+    public Window getWindow() {
+        return window;
     }
 
 }

@@ -19,7 +19,7 @@ package eu.matejkormuth.game.client.al;
 
 import static org.lwjgl.openal.AL10.*;
 
-import javax.vecmath.Vector3f;
+import eu.matejkormuth.game.shared.math.Vector3f;
 
 public class Listener {
     protected Vector3f position;

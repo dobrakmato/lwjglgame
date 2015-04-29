@@ -32,7 +32,7 @@ public class Window {
 
     private String title = "Game";
     private int width = 1280;
-    private int height = 720;
+    private int height = 700;
     private boolean fullscreen = false;
     private boolean resizable = false;
     private boolean vsync = true;
@@ -74,7 +74,7 @@ public class Window {
             // Check for window close event.
             if (Display.isCloseRequested()) {
                 this.shuttingDown = true;
-                Application.getApplication().shutdown();
+                Application.get().shutdown();
                 break;
             }
 

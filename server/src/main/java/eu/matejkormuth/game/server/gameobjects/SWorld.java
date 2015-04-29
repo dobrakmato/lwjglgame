@@ -25,7 +25,7 @@ import gnu.trove.map.hash.TShortObjectHashMap;
 
 import java.util.Collection;
 
-import javax.vecmath.Vector3f;
+import eu.matejkormuth.game.shared.math.Vector3f;
 
 public class SWorld implements World, DynamicsWorld {
 

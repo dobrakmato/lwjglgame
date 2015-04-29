@@ -15,33 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.matejkormuth.game.shared.physics.impl;
+package eu.matejkormuth.game.shared.content;
 
-import eu.matejkormuth.game.shared.physics.DynamicsWorld;
+import java.io.DataInputStream;
 
-import eu.matejkormuth.game.shared.math.Vector3f;
-
-public class DynamicsWorldImpl extends CollisionWorldImpl implements DynamicsWorld {
-
-    private Vector3f gravity;
-
-    public DynamicsWorldImpl() {
-        this.gravity = new Vector3f(GRAVITY_EARTH);
+public class ContentReader {
+    
+    public static final byte MAGIC = 0x4d;
+    
+    public static final byte FILE_VERTICES_FLOAT = 0x1;
+    public static final byte FILE_AUDIO_OGG = 0x2;
+    public static final byte FILE_AUDIO_WAV = 0x3;
+    public static final byte FILE_TEXTURE = 0x4;
+    public static final byte FILE_SCRIPT = 0x5;
+    public static final byte FILE_VIDEO = 0x6;
+    
+    private DataInputStream stream;
+    
+    public ContentReader(DataInputStream inputStream) {
+        this.stream = inputStream;
     }
-
-    @Override
-    public void update(float delta) {
-
-    }
-
-    @Override
-    public Vector3f getGravity() {
-        return this.gravity;
-    }
-
-    @Override
-    public void setGravity(Vector3f gravity) {
-        this.gravity = gravity;
-    }
-
 }
