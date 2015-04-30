@@ -42,14 +42,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Configuration {
-    private static final String CONFIGURATION_NAME = "configuration.json";
+    private static final String CONFIGURATION_NAME = "configuration.xml";
 
-    private int displayHeight = 1280;
-    private int displayWidth = 720;
+    private int displayHeight = 720;
+    private int displayWidth = 1280;
     private boolean fullscreen = true;
     private float musicVolume = 0.75f;
     private float soundVolume = 1f;
-    private float mouseSensitivity = 0.5f;
+    private float mouseSensitivity = 0.1f;
 
     public Configuration() {
 
@@ -72,7 +72,7 @@ public class Configuration {
             Object conf = u.unmarshal(new FileInputStream(new File(CONFIGURATION_NAME)));
             return (Configuration) conf;
         } catch (JAXBException | FileNotFoundException e) {
-            throw new RuntimeException(e);
+            return new Configuration();
         }
     }
 

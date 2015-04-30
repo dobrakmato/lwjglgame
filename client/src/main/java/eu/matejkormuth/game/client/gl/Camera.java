@@ -26,8 +26,10 @@
  */
 package eu.matejkormuth.game.client.gl;
 
-import eu.matejkormuth.game.client.input.KeyboardInput;
-import eu.matejkormuth.game.client.input.MouseInput;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
+import eu.matejkormuth.game.client.Application;
 import eu.matejkormuth.game.shared.math.Matrix4f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
@@ -38,6 +40,8 @@ public class Camera {
     private Vector3f pos;
     private Vector3f forward;
     private Vector3f up;
+
+    private float mouseSensitivity = Application.get().getConfiguration().getMouseSensitivity();
 
     public Camera() {
         this(new Vector3f(0), new Vector3f(0, 0, 1), new Vector3f(0, 1, 0));
@@ -97,44 +101,45 @@ public class Camera {
         return right;
     }
 
-    public void doInput(KeyboardInput k, MouseInput m) {
+    public void doInput() {
         float movAmount = 0.05f;
-        float rotAmount = 1f;
-        
-        if(k.isKeyDown(KeyboardInput.KEY_LSHIFT)) {
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
             movAmount *= 10;
         }
 
-        if (k.isKeyDown(KeyboardInput.KEY_W)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
             move(getForward(), movAmount);
         }
-        if (k.isKeyDown(KeyboardInput.KEY_S)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
             move(getForward(), -movAmount);
         }
-        if (k.isKeyDown(KeyboardInput.KEY_A)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
             move(getRight(), movAmount);
         }
-        if (k.isKeyDown(KeyboardInput.KEY_D)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
             move(getLeft(), movAmount);
         }
-        if (k.isKeyDown(KeyboardInput.KEY_SPACE)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
             move(getUp(), movAmount);
         }
-        if (k.isKeyDown(KeyboardInput.KEY_LCONTROL)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
             move(getUp(), -movAmount);
         }
 
-        if (k.isKeyDown(KeyboardInput.KEY_UP)) {
-            rotateY(-rotAmount);
-        }
-        if (k.isKeyDown(KeyboardInput.KEY_DOWN)) {
-            rotateY(rotAmount);
-        }
-        if (k.isKeyDown(KeyboardInput.KEY_LEFT)) {
-            rotateX(-rotAmount);
-        }
-        if (k.isKeyDown(KeyboardInput.KEY_RIGHT)) {
-            rotateX(rotAmount);
+        if (Mouse.isGrabbed()) {
+            int dx = Mouse.getDX();
+            int dy = Mouse.getDY();
+
+            boolean rotY = dx != 0;
+            boolean rotX = dy != 0;
+
+            if (rotY) {
+                rotateY(-dy * mouseSensitivity);
+            }
+            if (rotX) {
+                rotateX(dx * mouseSensitivity);
+            }
         }
     }
 

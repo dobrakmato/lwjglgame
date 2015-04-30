@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import eu.matejkormuth.game.client.commands.ShutdownCommand;
 import eu.matejkormuth.game.shared.console.StdInConsole;
+import eu.matejkormuth.game.shared.scripting.GroovyScriptExecutor;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -42,6 +43,8 @@ public class Application {
     private static Application app;
 
     public static void main(String[] args) {
+        // TODO: Parse args.
+        
         new Application().start();
     }
 
@@ -49,8 +52,10 @@ public class Application {
         return app;
     }
 
+    private GroovyScriptExecutor scriptExecutor;
     private StdInConsole console;
     private Window window;
+    private Configuration conf;
 
     public Application() {
         app = this;
@@ -58,6 +63,9 @@ public class Application {
 
     public void start() {
         log.info("Client started at {}", new SimpleDateFormat().format(new Date()));
+        
+        // Load configuration.
+        this.conf = Configuration.load();
 
         // Enable LWJGL debug.
         System.setProperty("org.lwjgl.util.Debug", "true");
@@ -65,12 +73,16 @@ public class Application {
         // Prepare content loading.
         Content.setRoot(new File(".").getAbsoluteFile().toPath());
 
+        // Initialize Groovy script executor.
+        this.scriptExecutor = new GroovyScriptExecutor();
+        this.scriptExecutor.execute(Content.getPath("scripts", "main.groovy"));
+        
         // Start console reader.
         this.console = new StdInConsole();
         this.console.getDispatcher().register(new ShutdownCommand());
         this.console.start();
 
-        // Create window.
+        // Create window and start rendering.
         this.window = new Window();
         this.window.doUpdate();
     }
@@ -78,14 +90,25 @@ public class Application {
     public void shutdown() {
         this.console.shutdown();
         this.window.shutdown();
+        
+        log.info("Saving configuration...");
+        conf.save();
     }
 
     public StdInConsole getConsole() {
         return console;
     }
-    
+
     public Window getWindow() {
         return window;
+    }
+    
+    public Configuration getConfiguration() {
+        return conf;
+    }
+    
+    public GroovyScriptExecutor getScriptExecutor() {
+        return scriptExecutor;
     }
 
 }

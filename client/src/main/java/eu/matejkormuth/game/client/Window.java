@@ -27,29 +27,26 @@
 package eu.matejkormuth.game.client;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import eu.matejkormuth.game.client.input.KeyboardInput;
-import eu.matejkormuth.game.client.input.MouseInput;
 
 public class Window {
 
     private static final Logger log = LoggerFactory.getLogger(Window.class);
 
     private String title = "Game";
-    private int width = 1280;
-    private int height = 700;
-    private boolean fullscreen = false;
+    private int width = Application.get().getConfiguration().getDisplayWidth();
+    private int height = Application.get().getConfiguration().getDisplayHeight();
+    private boolean fullscreen = Application.get().getConfiguration().isFullscreen();
     private boolean resizable = false;
     private boolean vsync = true;
     private boolean shuttingDown = false;
 
     private Renderer renderer;
-    private KeyboardInput keyboard;
-    private MouseInput mouse;
 
     public Window() {
         log.info("Initializing display...");
@@ -63,11 +60,20 @@ public class Window {
         }
 
         // Initialize input.
-        this.keyboard = new KeyboardInput();
-        this.mouse = new MouseInput();
+        try {
+            Keyboard.create();
+        } catch (LWJGLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            Mouse.create();
+            Mouse.setGrabbed(true);
+        } catch (LWJGLException e) {
+            throw new RuntimeException(e);
+        }
 
         // Initialize renderer.
-        this.renderer = new Renderer(this);
+        this.renderer = new Renderer();
     }
 
     private void setDefaults() throws LWJGLException {
@@ -87,13 +93,10 @@ public class Window {
                 break;
             }
 
-            // Render.
-            this.renderer.render();
-            // Read input.
-            this.keyboard.update();
-            this.mouse.update();
             // Update.
             this.renderer.update();
+            // Render.
+            this.renderer.render();
             // Swap buffers.
             Display.update();
             Display.sync(60);
@@ -182,14 +185,6 @@ public class Window {
 
     public void setLocation(int x, int y) {
         Display.setLocation(x, y);
-    }
-    
-    public KeyboardInput getKeyboard() {
-        return keyboard;
-    }
-    
-    public MouseInput getMouse() {
-        return mouse;
     }
 
 }

@@ -26,6 +26,9 @@
  */
 package eu.matejkormuth.game.shared.scripting;
 
+import org.codehaus.groovy.control.CompilationUnit;
+import org.codehaus.groovy.control.Phases;
+import org.codehaus.groovy.tools.GroovyClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +36,7 @@ import groovy.lang.Closure;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -41,46 +45,95 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ScriptExecutor {
+public class GroovyScriptExecutor {
 
-    private static final Logger log = LoggerFactory.getLogger(ScriptExecutor.class);
+    private static final Logger log = LoggerFactory.getLogger(GroovyScriptExecutor.class);
+    private static final Logger scriptLog = LoggerFactory.getLogger("ScriptLogger-0");
 
     private Map<Path, String> loadedScripts;
     private GroovyClassLoader gcl;
     private GroovyShell shell;
 
-    public ScriptExecutor() {
+    public GroovyScriptExecutor() {
         gcl = new GroovyClassLoader();
-        shell = new GroovyShell();
+        shell = new GroovyShell(gcl);
         loadedScripts = new HashMap<>();
 
-        addExecFunction();
+        addCtxVars();
     }
 
-    private void addExecFunction() {
-        shell.getContext().setVariable("exec", new Closure<Void>(this) {
+    private void addCtxVars() {
+        shell.getContext().setVariable("include", new Closure<Void>(this) {
             private static final long serialVersionUID = 3132067890900944384L;
 
             @Override
             public Void call(Object... args) {
-                ScriptExecutor.this.execute(Paths.get(args[0].toString()));
+                GroovyScriptExecutor.this.execute(Paths.get(args[0].toString()));
                 return null;
             }
         });
+
+        shell.getContext().setVariable("console", scriptLog);
     }
 
     public void execute(Path path) {
-        if (!loadedScripts.containsKey(path)) {
-            if (!load(path)) {
-                return;
+        try {
+            if (!loadedScripts.containsKey(path)) {
+                if (!loadScript(path)) {
+                    return;
+                }
             }
+            String script = loadedScripts.get(path);
+            if (isAClassDefinition(script)) {
+                compileAndLoadClass(path, script);
+            } else {
+                evalScript(script);
+            }
+
+        } catch (Exception e) {
+            log.error("Can't execute " + path.toString(), e);
         }
-        eval(loadedScripts.get(path));
     }
 
-    private boolean load(Path path) {
+    private void compileAndLoadClass(Path path, String scriptText) {
+        File srcFile = path.toFile();
+        File compiledFile = new File(srcFile.getAbsolutePath().replace(".groovy", ".gcs"));
+        String className = srcFile.getName().substring(0, srcFile.getName().indexOf("."));
+        byte[] classBytes = null;
+        if (!compiledFile.exists()) {
+            // Compile class.
+            CompilationUnit compileUnit = new CompilationUnit();
+            compileUnit.addSource(className, scriptText);
+            compileUnit.compile(Phases.CLASS_GENERATION);
+
+            for (Object compileClass : compileUnit.getClasses()) {
+                GroovyClass groovyClass = (GroovyClass) compileClass;
+                if (className.equals(groovyClass.getName())) {
+                    // Save class.
+                    try {
+                        Files.write(compiledFile.toPath(), classBytes = groovyClass.getBytes());
+                    } catch (IOException e) {
+                        log.error("Can't save compiled class for " + className);
+                    }
+                }
+            }
+
+        }
+        // Load compiled file.
+        if(classBytes == null) {
+            try {
+                classBytes = Files.readAllBytes(compiledFile.toPath());
+            } catch (IOException e) {
+                log.error("Can't load compiled class file!", e);
+            }
+        }
+        
+        gcl.defineClass(className, classBytes);
+    }
+
+    private boolean loadScript(Path path) {
         if (path.toFile().exists()) {
-            log.info("Loading script file {}...", path.toString());
+            log.debug("Loading script file {}...", path.toString());
             try {
                 String contents = new String(Files.readAllBytes(path), Charset.forName("UTF-8"));
                 loadedScripts.put(path, contents);
@@ -96,20 +149,6 @@ public class ScriptExecutor {
         }
     }
 
-    private void eval(String script) {
-        
-        // Determinate whether this is a script or a class definition.
-        if(isAClassDefinition(script)) {
-            loadClass(script);
-        } else {
-            evalScript(script);
-        }
-    }
-
-    private void loadClass(String script) {
-        gcl.parseClass(script);
-    }
-
     private void evalScript(String script) {
         try {
             shell.evaluate(script);
@@ -119,6 +158,6 @@ public class ScriptExecutor {
     }
 
     private boolean isAClassDefinition(String script) {
-        return script.contains("class");
+        return script.contains("class ");
     }
 }
