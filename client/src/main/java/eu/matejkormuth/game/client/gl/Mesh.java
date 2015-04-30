@@ -92,6 +92,9 @@ public class Mesh implements Disposable {
         // Position - location 0
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, false, Float.BYTES * FloatVertex.SIZE, 0);
+        // TexCoords - location 1
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, Float.BYTES * FloatVertex.SIZE, Float.BYTES * 3);
     }
 
     public void bind() {
@@ -100,7 +103,6 @@ public class Mesh implements Disposable {
 
     public void draw() {
         glBindVertexArray(vao);
-        // glDrawArrays(GL_TRIANGLES, 0, vertices);
         glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
     }

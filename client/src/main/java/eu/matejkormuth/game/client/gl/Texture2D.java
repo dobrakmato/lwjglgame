@@ -27,50 +27,47 @@
 package eu.matejkormuth.game.client.gl;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL45.*;
+import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL30.*;
 import eu.matejkormuth.game.shared.Disposable;
-import eu.matejkormuth.game.shared.filetypes.TextureFormat;
 
-import java.nio.FloatBuffer;
+import java.nio.ByteBuffer;
 
 public class Texture2D implements Disposable {
     private int width;
     private int height;
-    private TextureFormat format;
     private int textureId;
-    
-    public Texture2D(int width, int height, TextureFormat format, FloatBuffer buffer) {
+
+    public Texture2D(int width, int height, ByteBuffer texData) {
         this.width = width;
         this.height = height;
-        this.format = format;
-        initialize(buffer);
+        initialize(texData);
     }
-    
-    private void initialize(FloatBuffer buffer) {
+
+    private void initialize(ByteBuffer buffer) {
         // Create Texture2D.
         this.textureId = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, this.textureId);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, format.getGlFormat(), width, height, 0, format.getGlFormat(), GL_FLOAT, buffer);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-        glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        
-        glGenerateTextureMipmap(GL_TEXTURE_2D);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+        glGenerateMipmap(GL_TEXTURE_2D);
     }
-    
-    public void bind(int target) {
-        glBindTexture(target, this.textureId);
+
+    public void bind(int samplerSlot) {
+        glActiveTexture(GL_TEXTURE0 + samplerSlot);
+        glBindTexture(GL_TEXTURE_2D, this.textureId);
     }
-    
-    public TextureFormat getFormat() {
-        return format;
-    }
-    
+
     public int getHeight() {
         return height;
     }
-    
+
     public int getWidth() {
         return width;
     }

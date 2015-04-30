@@ -32,6 +32,7 @@ public enum TextureFormat {
     GL_RGB(0x1907),
     GL_BGR(0x80E0),
     GL_RGBA(0x1908),
+    GL_RGBA8(0x8058),
     GL_BGRA(0x80E1);
 
     private final int glFormat;

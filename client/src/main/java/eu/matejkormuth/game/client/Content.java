@@ -26,19 +26,26 @@
  */
 package eu.matejkormuth.game.client;
 
+import org.lwjgl.BufferUtils;
+
 import eu.matejkormuth.game.client.gl.FloatVertex;
 import eu.matejkormuth.game.client.gl.Mesh;
+import eu.matejkormuth.game.client.gl.Texture2D;
 import eu.matejkormuth.game.shared.math.Vector3f;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 public class Content {
 
@@ -58,11 +65,46 @@ public class Content {
         return null;
     }
 
-    public static Mesh loadObj(String first, String... more) {
-        return loadObj(getPath(first, more));
+    public static Texture2D importTexture2D(String first, String... more) {
+        return importTexture2D(getPath(first, more));
     }
 
-    private static Mesh loadObj(Path path) {
+    private static Texture2D importTexture2D(Path path) {
+        try {
+            BufferedImage image = ImageIO.read(path.toFile());
+            int[] pixels = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
+
+            ByteBuffer texData = BufferUtils.createByteBuffer(pixels.length * 4);
+            boolean hasAlpha = image.getColorModel().hasAlpha();
+
+            int currentPixel;
+            for (int x = 0; x < image.getWidth(); x++) {
+                for (int y = 0; y < image.getHeight(); y++) {
+                    currentPixel = pixels[x * image.getWidth() + y];
+
+                    texData.put((byte) ((currentPixel >> 16) & 0xFF));
+                    texData.put((byte) ((currentPixel >> 8) & 0xFF));
+                    texData.put((byte) ((currentPixel) & 0xFF));
+                    if (hasAlpha) {
+                        texData.put((byte) ((currentPixel >> 24) & 0xFF));
+                    } else {
+                        texData.put((byte) 0xFF);
+                    }
+                }
+            }
+            texData.flip();
+            return new Texture2D(image.getWidth(), image.getHeight(), texData);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Mesh importObj(String first, String... more) {
+        return importObj(getPath(first, more));
+    }
+
+    private static Mesh importObj(Path path) {
         try {
             List<FloatVertex> vertices = new ArrayList<>();
             TIntList indices = new TIntArrayList();
@@ -78,8 +120,8 @@ public class Content {
                     indices.add(Integer.valueOf(tokens[1].split("/")[0]) - 1);
                     indices.add(Integer.valueOf(tokens[2].split("/")[0]) - 1);
                     indices.add(Integer.valueOf(tokens[3].split("/")[0]) - 1);
-                    
-                    if(tokens.length > 4) {
+
+                    if (tokens.length > 4) {
                         indices.add(Integer.valueOf(tokens[1].split("/")[0]) - 1);
                         indices.add(Integer.valueOf(tokens[3].split("/")[0]) - 1);
                         indices.add(Integer.valueOf(tokens[4].split("/")[0]) - 1);

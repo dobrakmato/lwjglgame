@@ -46,6 +46,10 @@ public class Shader implements Disposable {
 
             throw new RuntimeException("Shader compilation error(s): " + error);
         }
+        
+        int length = glGetShaderi(shaderId, GL_INFO_LOG_LENGTH);
+        String error = glGetShaderInfoLog(shaderId, length);
+        System.out.println(error);
     }
 
     public int getShaderId() {

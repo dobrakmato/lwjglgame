@@ -26,25 +26,38 @@
  */
 package eu.matejkormuth.game.client.gl;
 
+
+import eu.matejkormuth.game.shared.math.Vector2f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
 public class FloatVertex {
-    
-    // Size of this vertex is 3 floating point numbers.
-    public static final int SIZE = 3;
+
+    // Size of this vertex is 5 floating point numbers.
+    public static final int SIZE = 5;
+    public static final int BYTES = 4; // Float has 4 bytes.
 
     private float[] data = new float[SIZE];
-    
+
     public FloatVertex(Vector3f pos) {
-        this.setPosition(pos);
+        this(pos, new Vector2f());
     }
-    
+
+    public FloatVertex(Vector3f pos, Vector2f texCoords) {
+        this.setPosition(pos);
+        this.setTexCoords(texCoords);
+    }
+
     public void setPosition(Vector3f pos) {
         this.data[0] = pos.x;
         this.data[1] = pos.y;
         this.data[2] = pos.z;
     }
-    
+
+    private void setTexCoords(Vector2f texCoords) {
+        this.data[3] = texCoords.x;
+        this.data[4] = texCoords.y;
+    }
+
     public float[] getData() {
         return data;
     }
