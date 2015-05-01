@@ -1,5 +1,5 @@
 /**
- * client - Multiplayer Java game engine.
+ * shared - Multiplayer Java game engine.
  * Copyright (c) 2015, Matej Kormuth <http://www.github.com/dobrakmato>
  * All rights reserved.
  *
@@ -24,75 +24,60 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client;
+package eu.matejkormuth.game.shared;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.*;
+import eu.matejkormuth.game.shared.gameobjects.World;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Map;
 
-import eu.matejkormuth.game.client.gl.Scene;
+public abstract class GameObject implements Updatable {
+    private Map<Class<? extends GameComponent>, GameComponent> components;
+    private World world;
+    private Game game;
 
-public class Renderer {
-
-    private static final Logger log = LoggerFactory.getLogger(Renderer.class);
-
-    private Scene scene;
-
-    public static void clear() {
-        // TODO: Stencil buffer.
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    public GameObject(Game game, World world) {
+        this.game = game;
+        this.world = world;
     }
 
-    public static void setTextures(boolean enabled) {
-        if (enabled) {
-            glEnable(GL_TEXTURE_2D);
+    public void add(GameComponent component) {
+        component.world = this.world;
+        component.game = this.game;
+        component.parent = this;
+        components.put(component.getClass(), component);
+        component.initialize();
+    }
+
+    public <T> T get(Class<? extends GameComponent> component) {
+        Class<?> clazz = component.getClass();
+        if (components.containsKey(clazz)) {
+            return cast(components.get(clazz));
         } else {
-            glDisable(GL_TEXTURE_2D);
+            return null;
         }
-
     }
 
-    public static void init() {
-        glClearColor(0.3f, 0.5f, 1f, 0);
-
-        // Enable face culling.
-        glFrontFace(GL_CW);
-        glCullFace(GL_BACK);
-        glEnable(GL_CULL_FACE);
-
-        // Enable depth test.
-        glEnable(GL_DEPTH_TEST);
-
-        // Enable texturing.
-        glEnable(GL_TEXTURE_2D);
-
-        // TODO: Depth clamp for later.
-
-        glEnable(GL_FRAMEBUFFER_SRGB);
+    @SuppressWarnings("unchecked")
+    private <T> T cast(Object obj) {
+        return (T) obj;
     }
 
-    public Renderer() {
-        // Output GL info to log.
-        log.info("Initializing renderer...");
-        log.info(" Vendor: {}", glGetString(GL_VENDOR));
-        log.info(" Version: {}", glGetString(GL_VERSION));
-
-        init();
-        initScene();
+    public void initialize() {
+        for (GameComponent component : components.values()) {
+            component.initialize();
+        }
     }
 
-    private void initScene() {
-        scene = new Scene();
+    @Override
+    public void update(float delta) {
+        for (GameComponent component : components.values()) {
+            component.update(delta);
+        }
     }
 
     public void render() {
-        clear();
-        scene.render();
-    }
-
-    public void update() {
-        scene.update();
+        for (GameComponent component : components.values()) {
+            component.render();
+        }
     }
 }

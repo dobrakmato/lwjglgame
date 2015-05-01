@@ -1,5 +1,5 @@
 /**
- * shared - Multiplayer Java game engine.
+ * client - Multiplayer Java game engine.
  * Copyright (c) 2015, Matej Kormuth <http://www.github.com/dobrakmato>
  * All rights reserved.
  *
@@ -24,32 +24,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.shared.math;
+package eu.matejkormuth.game.client.gl.lighting.shaders;
 
-public class FastMath {
-    static final int precision = 100; // gradations per degree, adjust to suit
+import eu.matejkormuth.game.client.Content;
+import eu.matejkormuth.game.client.gl.Material;
+import eu.matejkormuth.game.client.gl.Program;
+import eu.matejkormuth.game.client.gl.ShaderType;
+import eu.matejkormuth.game.client.gl.Texture2D;
+import eu.matejkormuth.game.shared.math.Matrix4f;
 
-    static final int modulus = 360 * precision;
-    static final float[] sin = new float[modulus]; // lookup table
-    static {
-        // a static initializer fills the table
-        // in this implementation, units are in degrees
-        for (int i = 0; i < sin.length; i++) {
-            sin[i] = (float) Math.sin((i * Math.PI) / (precision * 180));
+public class BasicShader extends Program {
+
+    public BasicShader() {
+        super(Content.importShader(ShaderType.VERTEX, "shaders", "basic.vs"), Content.importShader(ShaderType.FRAGMENT,
+                "shaders", "basic.fs"));
+    }
+
+    public void setWorldMatrix(Matrix4f worldMatrix) {
+        setUniform("transform", worldMatrix);
+    }
+
+    public void setMaterial(Material material) {
+        if(material.getTexture() != null) {
+            material.getTexture().bind(0);
+        } else {
+            Texture2D.unbind();
         }
-    }
-
-    // Private function for table lookup
-    private static float sinLookup(int a) {
-        return a >= 0 ? sin[a % (modulus)] : -sin[-a % (modulus)];
-    }
-
-    // These are your working functions:
-    public static float sin(float degrees) {
-        return sinLookup((int) (degrees * precision + 0.5f));
-    }
-
-    public static float cos(float degrees) {
-        return sinLookup((int) ((degrees + 90f) * precision + 0.5f));
+        setUniform("color", material.getColor());
     }
 }

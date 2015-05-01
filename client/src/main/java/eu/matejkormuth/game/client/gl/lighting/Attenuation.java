@@ -1,5 +1,5 @@
 /**
- * shared - Multiplayer Java game engine.
+ * client - Multiplayer Java game engine.
  * Copyright (c) 2015, Matej Kormuth <http://www.github.com/dobrakmato>
  * All rights reserved.
  *
@@ -24,32 +24,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.shared.math;
+package eu.matejkormuth.game.client.gl.lighting;
 
-public class FastMath {
-    static final int precision = 100; // gradations per degree, adjust to suit
+public class Attenuation {
+    private float constant;
+    private float linear;
+    private float quadratic;
 
-    static final int modulus = 360 * precision;
-    static final float[] sin = new float[modulus]; // lookup table
-    static {
-        // a static initializer fills the table
-        // in this implementation, units are in degrees
-        for (int i = 0; i < sin.length; i++) {
-            sin[i] = (float) Math.sin((i * Math.PI) / (precision * 180));
-        }
+    public Attenuation(float constant, float linear, float quadratic) {
+        this.constant = constant;
+        this.linear = linear;
+        this.quadratic = quadratic;
     }
 
-    // Private function for table lookup
-    private static float sinLookup(int a) {
-        return a >= 0 ? sin[a % (modulus)] : -sin[-a % (modulus)];
+    public float getConstant() {
+        return constant;
     }
 
-    // These are your working functions:
-    public static float sin(float degrees) {
-        return sinLookup((int) (degrees * precision + 0.5f));
+    public void setConstant(float constant) {
+        this.constant = constant;
     }
 
-    public static float cos(float degrees) {
-        return sinLookup((int) ((degrees + 90f) * precision + 0.5f));
+    public float getLinear() {
+        return linear;
     }
+
+    public void setLinear(float linear) {
+        this.linear = linear;
+    }
+
+    public float getQuadratic() {
+        return quadratic;
+    }
+
+    public void setQuadratic(float quadratic) {
+        this.quadratic = quadratic;
+    }
+
 }

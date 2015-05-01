@@ -34,6 +34,7 @@ import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.BufferUtils;
 
 import eu.matejkormuth.game.shared.Disposable;
+import eu.matejkormuth.game.shared.math.Vector3f;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -44,8 +45,12 @@ public class Mesh implements Disposable {
     private int vao;
     private int ibo;
 
-    public Mesh(FloatVertex[] vertices, int[] indices) {
+    public Mesh(FloatVertex[] vertices, int[] indices, boolean calcNormals) {
         this.indices = indices.length;
+        
+        if(calcNormals) {
+            calcNormals(vertices, indices);
+        }
 
         // Create VAO.
         vao = glGenVertexArrays();
@@ -95,6 +100,9 @@ public class Mesh implements Disposable {
         // TexCoords - location 1
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, Float.BYTES * FloatVertex.SIZE, Float.BYTES * 3);
+        // Normal - location 2
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 3, GL_FLOAT, false, Float.BYTES * FloatVertex.SIZE, Float.BYTES * 5);
     }
 
     public void bind() {
@@ -105,6 +113,27 @@ public class Mesh implements Disposable {
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
+    }
+
+    public void calcNormals(FloatVertex[] vertices, int[] indices) {
+        for (int i = 0; i < indices.length; i += 3) {
+            int i0 = indices[i];
+            int i1 = indices[i + 1];
+            int i2 = indices[i + 2];
+            
+            Vector3f v1 = vertices[i1].getPos().subtract(vertices[i0].getPos());
+            Vector3f v2 = vertices[i2].getPos().subtract(vertices[i0].getPos());
+            
+            Vector3f normal = v1.cross(v2).normalize();
+            
+            vertices[i0].setNormal(vertices[i0].getNormal().add(normal));
+            vertices[i1].setNormal(vertices[i1].getNormal().add(normal));
+            vertices[i2].setNormal(vertices[i2].getNormal().add(normal));
+        }
+        
+        for(int i = 0; i < vertices.length; i++) {
+            vertices[i].setNormal(vertices[i].getNormal().normalize());
+        }
     }
 
     @Override

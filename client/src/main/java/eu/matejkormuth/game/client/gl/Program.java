@@ -151,5 +151,9 @@ public class Program implements Disposable {
         vertexShader = null;
         fragmentShader = null;
     }
+    
+    public static void unbind() {
+        glUseProgram(0);
+    }
 
 }

@@ -30,6 +30,8 @@ import org.lwjgl.BufferUtils;
 
 import eu.matejkormuth.game.client.gl.FloatVertex;
 import eu.matejkormuth.game.client.gl.Mesh;
+import eu.matejkormuth.game.client.gl.Shader;
+import eu.matejkormuth.game.client.gl.ShaderType;
 import eu.matejkormuth.game.client.gl.Texture2D;
 import eu.matejkormuth.game.shared.math.Vector3f;
 import gnu.trove.list.TIntList;
@@ -64,12 +66,20 @@ public class Content {
     public static <T> T load(Path path) {
         return null;
     }
+    
+    public static Shader importShader(ShaderType type, String first, String... more) {
+        return importShader(type, getPath(first, more));
+    }
+
+    public static Shader importShader(ShaderType type, Path path) {
+        return new Shader(type, readText(path));
+    }
 
     public static Texture2D importTexture2D(String first, String... more) {
         return importTexture2D(getPath(first, more));
     }
 
-    private static Texture2D importTexture2D(Path path) {
+    public static Texture2D importTexture2D(Path path) {
         try {
             BufferedImage image = ImageIO.read(path.toFile());
             int[] pixels = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
@@ -104,7 +114,7 @@ public class Content {
         return importObj(getPath(first, more));
     }
 
-    private static Mesh importObj(Path path) {
+    public static Mesh importObj(Path path) {
         try {
             List<FloatVertex> vertices = new ArrayList<>();
             TIntList indices = new TIntArrayList();
@@ -129,7 +139,7 @@ public class Content {
                 }
             }
 
-            return new Mesh(vertices.toArray(new FloatVertex[vertices.size()]), indices.toArray());
+            return new Mesh(vertices.toArray(new FloatVertex[vertices.size()]), indices.toArray(), true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

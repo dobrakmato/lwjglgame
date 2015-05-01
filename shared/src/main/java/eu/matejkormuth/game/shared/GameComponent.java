@@ -29,8 +29,13 @@ package eu.matejkormuth.game.shared;
 import eu.matejkormuth.game.shared.gameobjects.World;
 
 public abstract class GameComponent implements Updatable {
+    protected GameObject parent;
     protected Game game;
     protected World world;
+
+    public GameObject getParent() {
+        return parent;
+    }
 
     public Game getGame() {
         return game;
@@ -38,5 +43,15 @@ public abstract class GameComponent implements Updatable {
 
     public World getWorld() {
         return world;
+    }
+
+    public void initialize() {
+    }
+
+    @Override
+    public void update(float delta) {
+    }
+
+    public void render() {
     }
 }

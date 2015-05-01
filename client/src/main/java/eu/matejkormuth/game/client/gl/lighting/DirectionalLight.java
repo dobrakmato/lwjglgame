@@ -1,5 +1,5 @@
 /**
- * shared - Multiplayer Java game engine.
+ * client - Multiplayer Java game engine.
  * Copyright (c) 2015, Matej Kormuth <http://www.github.com/dobrakmato>
  * All rights reserved.
  *
@@ -24,32 +24,34 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.shared.math;
+package eu.matejkormuth.game.client.gl.lighting;
 
-public class FastMath {
-    static final int precision = 100; // gradations per degree, adjust to suit
+import eu.matejkormuth.game.shared.math.Vector3f;
 
-    static final int modulus = 360 * precision;
-    static final float[] sin = new float[modulus]; // lookup table
-    static {
-        // a static initializer fills the table
-        // in this implementation, units are in degrees
-        for (int i = 0; i < sin.length; i++) {
-            sin[i] = (float) Math.sin((i * Math.PI) / (precision * 180));
-        }
+public class DirectionalLight {
+
+    private BaseLight base;
+    private Vector3f direction;
+
+    public DirectionalLight(BaseLight base, Vector3f direction) {
+        this.base = base;
+        this.direction = direction.normalize();
     }
 
-    // Private function for table lookup
-    private static float sinLookup(int a) {
-        return a >= 0 ? sin[a % (modulus)] : -sin[-a % (modulus)];
+    public BaseLight getBase() {
+        return base;
     }
 
-    // These are your working functions:
-    public static float sin(float degrees) {
-        return sinLookup((int) (degrees * precision + 0.5f));
+    public void setBase(BaseLight base) {
+        this.base = base;
     }
 
-    public static float cos(float degrees) {
-        return sinLookup((int) ((degrees + 90f) * precision + 0.5f));
+    public Vector3f getDirection() {
+        return direction;
     }
+
+    public void setDirection(Vector3f direction) {
+        this.direction = direction;
+    }
+
 }

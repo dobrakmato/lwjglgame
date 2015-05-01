@@ -27,57 +27,65 @@
 package eu.matejkormuth.game.client.gl;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL30.*;
-import eu.matejkormuth.game.shared.Disposable;
+import static org.lwjgl.opengl.GL32.*;
 
-import java.nio.ByteBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class Texture2D implements Disposable {
-    private int width;
-    private int height;
-    private int textureId;
+import eu.matejkormuth.game.client.Scene;
 
-    public Texture2D(int width, int height, ByteBuffer texData) {
-        this.width = width;
-        this.height = height;
-        initialize(texData);
+public class Renderer {
+
+    private static final Logger log = LoggerFactory.getLogger(Renderer.class);
+
+    // Currently rendered scene.
+    private Scene scene;
+
+    public static void clear() {
+        // TODO: Stencil buffer.
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    private void initialize(ByteBuffer buffer) {
-        // Create Texture2D.
-        this.textureId = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, this.textureId);
+    public static void init() {
+        glClearColor(0, 0, 0, 0);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        // Enable face culling.
+        glFrontFace(GL_CW);
+        glCullFace(GL_BACK);
+        glEnable(GL_CULL_FACE);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+        // Enable depth test.
+        glEnable(GL_DEPTH_TEST);
 
-        glGenerateMipmap(GL_TEXTURE_2D);
+        // Enable texturing.
+        glEnable(GL_TEXTURE_2D);
+
+        glEnable(GL_DEPTH_CLAMP);
+
+        //glEnable(GL_FRAMEBUFFER_SRGB);
     }
 
-    public void bind(int samplerSlot) {
-        glActiveTexture(GL_TEXTURE0 + samplerSlot);
-        glBindTexture(GL_TEXTURE_2D, this.textureId);
+    public Renderer() {
+        // Output GL info to log.
+        log.info("Initializing renderer...");
+        log.info(" Vendor: {}", glGetString(GL_VENDOR));
+        log.info(" Version: {}", glGetString(GL_VERSION));
+
+        init();
+        initScene();
     }
 
-    public int getHeight() {
-        return height;
+    private void initScene() {
+        scene = new Scene();
+        scene.init();
     }
 
-    public int getWidth() {
-        return width;
+    public void render() {
+        clear();
+        scene.render();
     }
 
-    @Override
-    public void dispose() {
-        glDeleteTextures(this.textureId);
-    }
-
-    public static void unbind() {
-        glBindTexture(GL_TEXTURE_2D, 0);
+    public void update() {
+        scene.update();
     }
 }

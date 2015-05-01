@@ -103,6 +103,10 @@ public class FrameBuffer implements Disposable {
         glBindFramebuffer(GL_FRAMEBUFFER, this.fbo);
     }
 
+    public int getTextureId() {
+        return textureId;
+    }
+    
     @Override
     public void dispose() {
         // Dispose depth buffer.

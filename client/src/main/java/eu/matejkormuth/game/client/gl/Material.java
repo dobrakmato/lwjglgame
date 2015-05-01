@@ -26,61 +26,72 @@
  */
 package eu.matejkormuth.game.client.gl;
 
-
-import eu.matejkormuth.game.shared.math.Vector2f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
-public class FloatVertex {
+public class Material {
+    private Texture2D texture;
+    private Texture2D normalMap;
+    private Texture2D specularMap;
+    private Vector3f color;
+    private float specularIntensity;
+    private float specularPower;
 
-    // Size of this vertex is 8 floating point numbers.
-    public static final int SIZE = 8;
-    public static final int BYTES = 4; // Float has 4 bytes.
-
-    private float[] data = new float[SIZE];
-
-    public FloatVertex(Vector3f pos) {
-        this(pos, new Vector2f());
+    public Material(Texture2D texture, Texture2D normalMap, Texture2D specularMap, Vector3f color, float specularIntensity,
+            float specularPower) {
+        this.texture = texture;
+        this.normalMap = normalMap;
+        this.specularMap = specularMap;
+        this.color = color;
+        this.specularIntensity = specularIntensity;
+        this.specularPower = specularPower;
     }
 
-    public FloatVertex(Vector3f pos, Vector2f texCoords) {
-        this.setPosition(pos);
-        this.setTexCoords(texCoords);
-    }
-    
-    public FloatVertex(Vector3f pos, Vector2f texCoords, Vector3f normal) {
-        this.setPosition(pos);
-        this.setTexCoords(texCoords);
-        this.setNormal(normal);
+    public Texture2D getTexture() {
+        return texture;
     }
 
-    public void setPosition(Vector3f pos) {
-        this.data[0] = pos.x;
-        this.data[1] = pos.y;
-        this.data[2] = pos.z;
+    public void setTexture(Texture2D texture) {
+        this.texture = texture;
     }
 
-    private void setTexCoords(Vector2f texCoords) {
-        this.data[3] = texCoords.x;
-        this.data[4] = texCoords.y;
-    }
-    
-    public void setNormal(Vector3f normal) {
-        this.data[5] = normal.x;
-        this.data[6] = normal.y;
-        this.data[7] = normal.z;
+    public Texture2D getNormalMap() {
+        return normalMap;
     }
 
-    public float[] getData() {
-        return data;
+    public void setNormalMap(Texture2D normalTexture) {
+        this.normalMap = normalTexture;
     }
 
-    public Vector3f getPos() {
-        return new Vector3f(this.data[0], this.data[1], this.data[2]);
+    public Texture2D getSpecularMap() {
+        return specularMap;
     }
 
-    public Vector3f getNormal() {
-        return new Vector3f(this.data[5], this.data[6], this.data[7]);
+    public void setSpecularMap(Texture2D specularMap) {
+        this.specularMap = specularMap;
     }
 
-    
+    public Vector3f getColor() {
+        return color;
+    }
+
+    public void setColor(Vector3f color) {
+        this.color = color;
+    }
+
+    public float getSpecularPower() {
+        return specularPower;
+    }
+
+    public float getSpecularIntensity() {
+        return specularIntensity;
+    }
+
+    public void setSpecularPower(float specularPower) {
+        this.specularPower = specularPower;
+    }
+
+    public void setSpecularIntensity(float specularIntensity) {
+        this.specularIntensity = specularIntensity;
+    }
+
 }
