@@ -24,6 +24,7 @@ struct PointLight {
 	BaseLight base;
 	Attenuation atten;
 	vec3 position;
+	float range;
 };
 
 struct SpotLight {
@@ -82,7 +83,7 @@ vec4 calcPointLight(PointLight pointLight, vec3 normal) {
 	vec3 lightDir = worldPos0 - pointLight.position;
 	float distanceToPoint = length(lightDir);
 
-	if(distanceToPoint > MAX_LIGHT_RANGE) {
+	if(distanceToPoint > pointLight.range) {
 		return vec4(0, 0, 0, 0);
 	}
 
@@ -119,11 +120,15 @@ void main() {
 	totalLight += calcDirectionalLight(directionalLight, normal0); // normal0
 	
 	for(int i = 0; i < MAX_POINT_LIGHTS; i++) {
-		totalLight += calcPointLight(pointLights[i], normal0);
+		if(pointLights[i].base.intensity > 0) {
+			totalLight += calcPointLight(pointLights[i], normal0);
+		}
 	}
 	
 	for(int i = 0; i < MAX_SPOT_LIGHTS; i++) {
-		totalLight += calcSpotLight(spotLights[i], normal0);
+		if(spotLights[i].pointLight.base.intensity > 0) {
+			totalLight += calcSpotLight(spotLights[i], normal0);
+		}
 	}
 	
 	gl_FragColor = color * totalLight;

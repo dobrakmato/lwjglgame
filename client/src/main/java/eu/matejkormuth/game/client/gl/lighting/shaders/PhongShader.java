@@ -26,7 +26,7 @@
  */
 package eu.matejkormuth.game.client.gl.lighting.shaders;
 
-import eu.matejkormuth.game.client.Content;
+import eu.matejkormuth.game.client.content.Content;
 import eu.matejkormuth.game.client.gl.Material;
 import eu.matejkormuth.game.client.gl.Program;
 import eu.matejkormuth.game.client.gl.ShaderType;
@@ -110,6 +110,7 @@ public class PhongShader extends Program {
         setUniform(uniform + ".base", light.getBase());
         setUniform(uniform + ".atten", light.getAtten());
         setUniform(uniform + ".position", light.getPosition());
+        setUniformf(uniform + ".range", light.getRange());
     }
 
     private void setUniform(String uniform, Attenuation atten) {

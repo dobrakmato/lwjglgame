@@ -24,20 +24,39 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.core.scene.lights;
+package client;
 
-import eu.matejkormuth.game.client.core.scene.Property;
+import org.junit.Test;
+
+import eu.matejkormuth.game.client.core.scene.NodeGroup;
+import eu.matejkormuth.game.client.core.scene.SceneGraphWriter;
 import eu.matejkormuth.game.client.core.scene.SceneNode;
-import eu.matejkormuth.game.client.gl.lighting.Attenuation;
+import eu.matejkormuth.game.client.core.scene.lights.PointLight;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
-public class PointLight extends SceneNode {
+public class SceneGraphWriterTest {
 
-    @Property
-    public Attenuation attenuation = new Attenuation(0, 0, 1);
-    @Property
-    public Vector3f color = new Vector3f(1);
-    @Property
-    public float intensity = 0.75f;
+    @Test
+    public void test() {
+        StringBuilder builder = new StringBuilder();
+        SceneGraphWriter writer = new SceneGraphWriter(builder);
+        SceneNode root = new SceneNode();
+        root.setRootNode(true);
+        PointLight light = new PointLight();
+        light.position = new Vector3f(1, 2, 3);
+        root.addChild(light);
+        NodeGroup group = new NodeGroup();
+        PointLight light2 = new PointLight();
+        light.position = new Vector3f(4, 5, 6);
+        PointLight light3 = new PointLight();
+        light.position = new Vector3f(1, -2, 1);
+        group.addChild(light2);
+        group.addChild(light3);
+        root.addChild(group);
+        
+        writer.write(root, "scene 1");
+
+        System.out.println(builder.toString());
+    }
 
 }

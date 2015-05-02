@@ -161,4 +161,8 @@ public class Vector3f implements Cloneable {
         return "Vector3f [x=" + x + ", y=" + y + ", z=" + z + "]";
     }
 
+    public float max() {
+        return Math.max(this.x, Math.max(this.y, this.z));
+    }
+
 }

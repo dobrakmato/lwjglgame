@@ -24,20 +24,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.core.scene.lights;
+package eu.matejkormuth.game.client.content;
 
-import eu.matejkormuth.game.client.core.scene.Property;
-import eu.matejkormuth.game.client.core.scene.SceneNode;
-import eu.matejkormuth.game.client.gl.lighting.Attenuation;
-import eu.matejkormuth.game.shared.math.Vector3f;
+import eu.matejkormuth.game.shared.Disposable;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 
-public class PointLight extends SceneNode {
+import java.util.Arrays;
+import java.util.Iterator;
 
-    @Property
-    public Attenuation attenuation = new Attenuation(0, 0, 1);
-    @Property
-    public Vector3f color = new Vector3f(1);
-    @Property
-    public float intensity = 0.75f;
+public class ContentCache {
+    private TIntObjectMap<Disposable> objects;
 
+    public ContentCache() {
+        this.objects = new TIntObjectHashMap<>();
+    }
+    
+    public void disposeAll() {
+        for (Iterator<Disposable> iterator = objects.valueCollection().iterator(); iterator.hasNext();) {
+            Disposable d = iterator.next();
+            d.dispose();
+            iterator.remove();
+        }
+    }
+    
+    public int hash(String[] path) {
+        return Arrays.hashCode(path);
+    }
+
+    public boolean has(String[] path) {
+        return objects.containsKey(hash(path));
+    }
+
+    public Disposable get(String[] path) {
+        return objects.get(hash(path));
+    }
+
+    public Disposable load(String[] path, Disposable value) {
+        objects.put(hash(path), value);
+        return value;
+    }
 }

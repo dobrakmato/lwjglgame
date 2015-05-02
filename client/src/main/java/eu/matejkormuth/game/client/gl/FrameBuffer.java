@@ -27,13 +27,13 @@
 package eu.matejkormuth.game.client.gl;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL45.*;
 
 import org.lwjgl.opengl.Display;
 
 import eu.matejkormuth.game.shared.Disposable;
-import eu.matejkormuth.game.shared.filetypes.TextureFormat;
 
 import java.nio.FloatBuffer;
 
@@ -53,23 +53,14 @@ public class FrameBuffer implements Disposable {
 
     private int width;
     private int height;
-    private TextureFormat format;
 
     private int fbo;
     private int rbo;
     private int textureId;
 
-    public FrameBuffer(int width, int height, TextureFormat format) {
-        this.width = width;
-        this.height = height;
-        this.format = format;
-        initialize();
-    }
-
     public FrameBuffer(int width, int height) {
         this.width = width;
         this.height = height;
-        this.format = TextureFormat.GL_RGBA;
         initialize();
     }
 
@@ -80,21 +71,21 @@ public class FrameBuffer implements Disposable {
 
         // Create Texture2D.
         this.textureId = glGenTextures();
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, this.textureId);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, format.getGlFormat(), width, height, 0, format.getGlFormat(), GL_FLOAT,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT,
                 (FloatBuffer) null);
 
-        glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this.textureId, 0);
 
         // Create depth buffer.
         this.rbo = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, this.rbo);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, this.rbo);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this.rbo);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }

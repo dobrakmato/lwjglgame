@@ -24,37 +24,59 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.al;
+package eu.matejkormuth.game.client.content.objloading;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.AL10;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import eu.matejkormuth.game.shared.math.Vector2f;
+import eu.matejkormuth.game.shared.math.Vector3f;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
-import eu.matejkormuth.game.shared.Disposable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Device implements Disposable {
+public class IndexedModel {
+    private List<Vector3f> positions;
+    private List<Vector2f> texCoords;
+    private List<Vector3f> normals;
+    private TIntList indices;
 
-    private static final Logger log = LoggerFactory.getLogger(Device.class);
-
-    public Device() {
-        try {
-            log.info("Creating audio device with defaults to 44100Hz mixing @ 60Hz refresh.");
-            AL.create();
-
-            log.info(" Audio system vendor: {}", AL10.alGetString(AL10.AL_VENDOR));
-            log.info(" Audio system version: {}", AL10.alGetString(AL10.AL_VERSION));
-            log.info(" Audio system renderer: {}", AL10.alGetString(AL10.AL_RENDERER));
-            log.debug(" Audio system extensions: {}", AL10.alGetString(AL10.AL_EXTENSIONS));
-        } catch (LWJGLException e) {
-            throw new RuntimeException(e);
-        }
+    public IndexedModel() {
+        this.positions = new ArrayList<>();
+        this.texCoords = new ArrayList<>();
+        this.normals = new ArrayList<>();
+        this.indices = new TIntArrayList();
     }
 
-    @Override
-    public void dispose() {
-        log.info("Destorying audio device.");
-        AL.destroy();
+    public List<Vector3f> getPositions() {
+        return positions;
     }
+
+    public void setPositions(List<Vector3f> positions) {
+        this.positions = positions;
+    }
+
+    public List<Vector2f> getTexCoords() {
+        return texCoords;
+    }
+
+    public void setTexCoords(List<Vector2f> texCoords) {
+        this.texCoords = texCoords;
+    }
+
+    public List<Vector3f> getNormals() {
+        return normals;
+    }
+
+    public void setNormals(List<Vector3f> normals) {
+        this.normals = normals;
+    }
+
+    public TIntList getIndices() {
+        return indices;
+    }
+
+    public void setIndices(TIntList indices) {
+        this.indices = indices;
+    }
+
 }

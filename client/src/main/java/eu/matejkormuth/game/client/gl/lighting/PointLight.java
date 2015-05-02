@@ -29,14 +29,21 @@ package eu.matejkormuth.game.client.gl.lighting;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
 public class PointLight {
+    private static final int COLOR_DEPTH = 256;
     private BaseLight base;
     private Attenuation atten;
     private Vector3f position;
+    private float range;
 
     public PointLight(BaseLight base, Attenuation atten, Vector3f position) {
         this.base = base;
         this.atten = atten;
         this.position = position;
+        float a = atten.getQuadratic();
+        float b = atten.getLinear();
+        float c = atten.getConstant() - COLOR_DEPTH * base.getIntensity() * base.getColor().max();
+
+        this.range = (float)((-b + Math.sqrt(b * b - 4 * a * c))/(2 * a));
     }
 
     public BaseLight getBase() {
@@ -61,6 +68,14 @@ public class PointLight {
 
     public void setPosition(Vector3f position) {
         this.position = position;
+    }
+
+    public float getRange() {
+        return range;
+    }
+
+    public void setRange(float range) {
+        this.range = range;
     }
 
 }

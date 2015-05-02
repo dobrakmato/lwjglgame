@@ -29,7 +29,9 @@ package eu.matejkormuth.game.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.matejkormuth.game.client.al.AudioDevice;
 import eu.matejkormuth.game.client.commands.ShutdownCommand;
+import eu.matejkormuth.game.client.content.Content;
 import eu.matejkormuth.game.shared.console.StdInConsole;
 import eu.matejkormuth.game.shared.scripting.GroovyScriptExecutor;
 
@@ -51,7 +53,8 @@ public class Application {
     public static Application get() {
         return app;
     }
-
+    
+    private AudioDevice audioDevice;
     private GroovyScriptExecutor scriptExecutor;
     private StdInConsole console;
     private Window window;
@@ -82,6 +85,9 @@ public class Application {
         this.console.getDispatcher().register(new ShutdownCommand());
         this.console.start();
 
+        // Create audio device.
+        this.audioDevice = new AudioDevice();
+        
         // Create window and start rendering.
         this.window = new Window();
         this.window.doUpdate();

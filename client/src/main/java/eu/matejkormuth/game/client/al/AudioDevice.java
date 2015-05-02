@@ -24,20 +24,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.core.scene.lights;
+package eu.matejkormuth.game.client.al;
 
-import eu.matejkormuth.game.client.core.scene.Property;
-import eu.matejkormuth.game.client.core.scene.SceneNode;
-import eu.matejkormuth.game.client.gl.lighting.Attenuation;
-import eu.matejkormuth.game.shared.math.Vector3f;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.AL10;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class PointLight extends SceneNode {
+import eu.matejkormuth.game.shared.Disposable;
 
-    @Property
-    public Attenuation attenuation = new Attenuation(0, 0, 1);
-    @Property
-    public Vector3f color = new Vector3f(1);
-    @Property
-    public float intensity = 0.75f;
+public class AudioDevice implements Disposable {
 
+    private static final Logger log = LoggerFactory.getLogger(AudioDevice.class);
+
+    public AudioDevice() {
+        try {
+            log.info("Creating audio device with defaults to 44100Hz mixing @ 60Hz refresh.");
+            AL.create();
+
+            log.info(" Audio system vendor: {}", AL10.alGetString(AL10.AL_VENDOR));
+            log.info(" Audio system version: {}", AL10.alGetString(AL10.AL_VERSION));
+            log.info(" Audio system renderer: {}", AL10.alGetString(AL10.AL_RENDERER));
+            log.debug(" Audio system extensions: {}", AL10.alGetString(AL10.AL_EXTENSIONS));
+        } catch (LWJGLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void dispose() {
+        log.info("Destorying audio device.");
+        AL.destroy();
+    }
 }

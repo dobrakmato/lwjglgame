@@ -26,6 +26,7 @@
  */
 package eu.matejkormuth.game.client;
 
+import eu.matejkormuth.game.client.content.Content;
 import eu.matejkormuth.game.client.gl.Camera;
 import eu.matejkormuth.game.client.gl.FloatVertex;
 import eu.matejkormuth.game.client.gl.Material;
@@ -48,10 +49,10 @@ public class Scene {
     // private Mesh triangle = Content.importObj("models", "box.obj");
 
     private FloatVertex[] vertices = new FloatVertex[] { //
-    new FloatVertex(new Vector3f(-2, 0, -2), new Vector2f(0, 0)),// 0
-            new FloatVertex(new Vector3f(-2, 0, 2), new Vector2f(0, 1)), // 1
-            new FloatVertex(new Vector3f(2, 0, 2), new Vector2f(1, 1)), // 2
-            new FloatVertex(new Vector3f(2, 0, -2), new Vector2f(1, 0)),// 3
+    new FloatVertex(new Vector3f(-10, 0, -10), new Vector2f(0, 0)),// 0
+            new FloatVertex(new Vector3f(-10, 0, 10), new Vector2f(0, 1)), // 1
+            new FloatVertex(new Vector3f(10, 0, 10), new Vector2f(1, 1)), // 2
+            new FloatVertex(new Vector3f(10, 0, -10), new Vector2f(1, 0)),// 3
 
     };
     private int[] indices = new int[] { 0, 1, 2, 2, 3, 0 };
@@ -60,7 +61,7 @@ public class Scene {
     private Texture2D texture = Content.importTexture2D("textures", "texture.png");
     private Texture2D normalMap = Content.importTexture2D("textures", "texture_n.png");
     private Texture2D specularMap = Content.importTexture2D("textures", "texture_s.png");
-    private Material material = new Material(texture, normalMap, specularMap, new Vector3f(1, 1, 1), 1, 8);
+    private Material material = new Material(texture, normalMap, specularMap, new Vector3f(1, 1, 1), 1, 32);
     private Camera camera = new Camera();
 
     private DirectionalLight directionalLight = new DirectionalLight(new BaseLight(new Vector3f(0.7f, 0.7f, 0.5f),
@@ -69,6 +70,8 @@ public class Scene {
             0, 1), new Vector3f(0, .8f, 0));
     private PointLight pointLight2 = new PointLight(new BaseLight(new Vector3f(0, .25f, 1), 0.1f), new Attenuation(0,
             0, 1), new Vector3f(0, .8f, 5));
+    private PointLight pointLight3 = new PointLight(new BaseLight(new Vector3f(.25f, 1f, .1f), 0.4f), new Attenuation(1,
+            .1f, .08f), new Vector3f(0, 2f, -4));
     private SpotLight flashLight = new SpotLight(new PointLight(new BaseLight(new Vector3f(0, .5f, 1), 1f),
             new Attenuation(0, 0, 1), new Vector3f(0, .8f, 6)), new Vector3f(1), 0.7f);
 
@@ -85,9 +88,9 @@ public class Scene {
         float ry = 0;// (float) Math.sin(time) * 180;
         float rz = 0;
 
-        float sx = 4f;
-        float sy = 4f;
-        float sz = 4f;
+        float sx = 1f;
+        float sy = 1f;
+        float sz = 1f;
 
         float tx = 0;
         float ty = 0;
@@ -121,6 +124,7 @@ public class Scene {
         
         phong.setPointLight(0, pointLight1);
         phong.setPointLight(1, pointLight2);
+        phong.setPointLight(2, pointLight3);
         phong.setSpotLight(0, flashLight);
 
         phong.setEyePosition(camera.getPos());
