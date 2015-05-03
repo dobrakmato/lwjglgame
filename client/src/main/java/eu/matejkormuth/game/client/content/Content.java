@@ -28,7 +28,7 @@ package eu.matejkormuth.game.client.content;
 
 import eu.matejkormuth.game.client.content.loaders.AWTImageLoader;
 import eu.matejkormuth.game.client.content.loaders.OBJLoader;
-import eu.matejkormuth.game.client.core.scene.SceneNode;
+import eu.matejkormuth.game.client.core.scene.Node;
 import eu.matejkormuth.game.client.gl.Mesh;
 import eu.matejkormuth.game.client.gl.Shader;
 import eu.matejkormuth.game.client.gl.ShaderType;
@@ -110,11 +110,11 @@ public class Content {
         return objLoader.load(path);
     }
 
-    public static SceneNode importScene(String... more) {
+    public static Node importScene(String... more) {
         return importScene(getPath(DIR_LEVELS, more));
     }
 
-    public static SceneNode importScene(Path path) {
+    public static Node importScene(Path path) {
         throw new UnsupportedOperationException("Don't know how to import scene! Noooooooo!");
     }
 

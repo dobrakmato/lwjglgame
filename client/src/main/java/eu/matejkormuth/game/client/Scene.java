@@ -46,7 +46,7 @@ public class Scene {
 
     private PhongShader phong = new PhongShader();
 
-    // private Mesh triangle = Content.importObj("box.obj");
+    private Mesh box = Content.importMesh("box.obj");
 
     private FloatVertex[] vertices = new FloatVertex[] { //
     new FloatVertex(new Vector3f(-40, 0, -40), new Vector2f(0, 0)),// 0
@@ -94,7 +94,7 @@ public class Scene {
 
         float tx = 0;
         float ty = 0;
-        float tz = 5;
+        float tz = 0;
 
         float zNear = 0.1f;
         float zFar = 1000;
@@ -138,6 +138,8 @@ public class Scene {
         normalMap.bind(1);
         specularMap.bind(2);
         triangle.draw();
+        
+        phong.setModel(transform);
     }
 
     public void update() {

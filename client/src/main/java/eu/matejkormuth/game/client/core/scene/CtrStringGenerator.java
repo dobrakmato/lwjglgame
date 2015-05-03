@@ -30,8 +30,8 @@ import eu.matejkormuth.game.client.gl.lighting.Attenuation;
 import eu.matejkormuth.game.shared.math.Vector2f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
-public class ObjectInitializator {
-    public String createInitializator(Object obj) {
+public class CtrStringGenerator {
+    public String createConstructor(Object obj) {
         Class<?> c = obj.getClass();
         if (c == boolean.class || c == Boolean.class) {
             return Boolean.toString((boolean) obj);

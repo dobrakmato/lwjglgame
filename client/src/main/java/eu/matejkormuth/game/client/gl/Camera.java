@@ -40,7 +40,6 @@ public class Camera {
     private Vector3f pos;
     private Vector3f forward;
     private Vector3f up;
-
     private float mouseSensitivity = Application.get().getConfiguration().getMouseSensitivity();
 
     public Camera() {

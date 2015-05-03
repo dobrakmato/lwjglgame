@@ -38,18 +38,18 @@ import java.util.Map;
 public class SceneExplorer {
 
     private static final Logger log = LoggerFactory.getLogger(SceneExplorer.class);
-    private Map<Class<? extends SceneNode>, Field[]> propertiesCache;
+    private Map<Class<? extends Node>, Field[]> propertiesCache;
 
     public SceneExplorer() {
         propertiesCache = new HashMap<>();
     }
 
-    public List<SceneNode> getChildren(SceneNode node) {
+    public List<Node> getChildren(Node node) {
         return node.getChildren();
     }
     
-    public Field[] getProperties(SceneNode node) {
-        Class<? extends SceneNode> clazz = node.getClass();
+    public Field[] getProperties(Node node) {
+        Class<? extends Node> clazz = node.getClass();
         if (propertiesCache.containsKey(clazz)) {
             return propertiesCache.get(clazz);
         } else {
@@ -65,8 +65,8 @@ public class SceneExplorer {
         }
     }
 
-    public Object getProperty(SceneNode node, String name) {
-        Class<? extends SceneNode> clazz = node.getClass();
+    public Object getProperty(Node node, String name) {
+        Class<? extends Node> clazz = node.getClass();
         Field[] properties = null;
         if (propertiesCache.containsKey(clazz)) {
             properties = propertiesCache.get(clazz);
@@ -86,8 +86,8 @@ public class SceneExplorer {
         return null;
     }
 
-    public void setProperty(SceneNode node, String name, Object value) {
-        Class<? extends SceneNode> clazz = node.getClass();
+    public void setProperty(Node node, String name, Object value) {
+        Class<? extends Node> clazz = node.getClass();
         Field[] properties = null;
         if (propertiesCache.containsKey(clazz)) {
             properties = propertiesCache.get(clazz);
@@ -105,15 +105,15 @@ public class SceneExplorer {
         }
     }
 
-    public String getType(SceneNode node) {
+    public String getType(Node node) {
         return node.getClass().getSimpleName();
     }
 
-    public String getName(SceneNode node) {
+    public String getName(Node node) {
         return node.name;
     }
 
-    public Object getValue(Field property, SceneNode node) {
+    public Object getValue(Field property, Node node) {
         try {
             return property.get(node);
         } catch (IllegalArgumentException | IllegalAccessException e) {
@@ -122,7 +122,7 @@ public class SceneExplorer {
         }
     }
 
-    public int getChildrenCount(SceneNode node) {
+    public int getChildrenCount(Node node) {
         return node.children.size();
     }
 }

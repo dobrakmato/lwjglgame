@@ -32,13 +32,13 @@ public class SceneGraphWriter {
 
     private static final String EOL = System.lineSeparator();
     private SceneExplorer explorer;
-    private ObjectInitializator initializator;
+    private CtrStringGenerator initializator;
     private int currentIdentation = 0;
     private StringBuilder out;
 
     public SceneGraphWriter(StringBuilder output) {
         explorer = new SceneExplorer();
-        initializator = new ObjectInitializator();
+        initializator = new CtrStringGenerator();
         this.out = output;
     }
 
@@ -62,9 +62,9 @@ public class SceneGraphWriter {
         return "// " + msg;
     }
 
-    public void write(SceneNode root, String name) {
+    public void write(Node root, String name) {
         if (!root.isRootNode()) {
-            throw new IllegalArgumentException("SceneNode must be root node!");
+            throw new IllegalArgumentException("Node must be root node!");
         }
         // Reset identation.
         currentIdentation = 0;
@@ -79,16 +79,16 @@ public class SceneGraphWriter {
         line("import eu.matejkormuth.game.shared.math.*");
 
         nl();
-        line("class " + className(name) + " extends SceneNode {");
+        line("class " + className(name) + " extends Node {");
         currentIdentation += 4;
         writeRootChildren(root);
         currentIdentation -= 4;
         line("}");
     }
 
-    private void writeRootChildren(SceneNode root) {
+    private void writeRootChildren(Node root) {
         // Write root children nodes.
-        for (SceneNode child : explorer.getChildren(root)) {
+        for (Node child : explorer.getChildren(root)) {
             String nodeType = explorer.getType(child);
             String nodeName = fieldName(explorer.getName(child));
             // Open new child node.
@@ -103,7 +103,7 @@ public class SceneGraphWriter {
         }
     }
 
-    private void writeChildren(SceneNode node) {
+    private void writeChildren(Node node) {
         if (explorer.getChildrenCount(node) == 0) {
             line("children: []");
             return;
@@ -111,7 +111,7 @@ public class SceneGraphWriter {
 
         line("children: [");
         currentIdentation += 4;
-        for (SceneNode child : explorer.getChildren(node)) {
+        for (Node child : explorer.getChildren(node)) {
             String nodeType = explorer.getType(child);
             // Open new child node.
             line("new " + nodeType + "(");
@@ -127,11 +127,11 @@ public class SceneGraphWriter {
         line("]");
     }
 
-    private void writeProperties(SceneNode child) {
+    private void writeProperties(Node child) {
         // Write children node's properties.
         for (Field property : explorer.getProperties(child)) {
             String propertyName = property.getName();
-            String propertyInitializer = initializator.createInitializator(explorer.getValue(property, child));
+            String propertyInitializer = initializator.createConstructor(explorer.getValue(property, child));
             line(propertyName + ": " + propertyInitializer + ", ");
         }
     }

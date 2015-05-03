@@ -24,20 +24,49 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.core.scene.lights;
+package eu.matejkormuth.game.client.content.fileformat;
 
-import eu.matejkormuth.game.client.core.scene.Property;
-import eu.matejkormuth.game.client.gl.lighting.Attenuation;
-import eu.matejkormuth.game.shared.math.Vector3f;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-public class SpotLight {
+public class Material implements ToDataStreamSerializable {
+    private byte colorR;
+    private byte colorG;
+    private byte colorB;
 
-    @Property
-    public Attenuation attenuation = new Attenuation(0, 0, 1);
-    @Property
-    public Vector3f color = new Vector3f(1);
-    @Property
-    public float intensity = 0.75f;
-    @Property
-    public Vector3f direction = new Vector3f(1, 1, 1);
+    private String diffuseMap;
+    private String normalMap;
+    private String specularMap;
+
+    private float specularIntensity;
+    private float specularPower;
+
+    @Override
+    public void serialize(DataOutputStream out) throws IOException {
+        out.writeByte(colorR);
+        out.writeByte(colorG);
+        out.writeByte(colorB);
+        
+        out.writeUTF(diffuseMap);
+        out.writeUTF(normalMap);
+        out.writeUTF(specularMap);
+        
+        out.writeFloat(specularIntensity);
+        out.writeFloat(specularPower);
+    }
+
+    @Override
+    public void deserialize(DataInputStream in) throws IOException {
+        colorR = in.readByte();
+        colorG = in.readByte();
+        colorB = in.readByte();
+        
+        diffuseMap = in.readUTF();
+        normalMap = in.readUTF();
+        specularMap = in.readUTF();
+        
+        specularIntensity = in.readFloat();
+        specularPower = in.readFloat();
+    }
 }

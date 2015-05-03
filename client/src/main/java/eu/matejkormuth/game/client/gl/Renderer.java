@@ -1,28 +1,28 @@
 /**
- * client - Multiplayer Java game engine.
- * Copyright (c) 2015, Matej Kormuth <http://www.github.com/dobrakmato>
- * All rights reserved.
+ * client - Multiplayer Java game engine. Copyright (c) 2015, Matej Kormuth
+ * <http://www.github.com/dobrakmato> All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 package eu.matejkormuth.game.client.gl;
 
@@ -40,7 +40,15 @@ import org.slf4j.LoggerFactory;
 
 import eu.matejkormuth.game.client.Scene;
 import eu.matejkormuth.game.client.content.Content;
-import eu.matejkormuth.game.client.core.scene.SceneNode;
+import eu.matejkormuth.game.client.core.scene.Node;
+import eu.matejkormuth.game.client.core.scene.nodetypes.DirectionalLight;
+import eu.matejkormuth.game.client.core.scene.nodetypes.Model;
+import eu.matejkormuth.game.client.core.scene.nodetypes.PointLight;
+import eu.matejkormuth.game.client.core.scene.nodetypes.SpotLight;
+import eu.matejkormuth.game.client.gl.lighting.Attenuation;
+import eu.matejkormuth.game.shared.math.Color3f;
+import eu.matejkormuth.game.shared.math.Vector2f;
+import eu.matejkormuth.game.shared.math.Vector3f;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -61,11 +69,55 @@ public class Renderer {
     private int quadEBO;
 
     private FrameBuffer buffer3D;
-    private FrameBuffer buffer2D;
 
     // Currently rendered scene.
     private Scene scene;
-    private SceneNode rootNode;
+    private Node rootNode;
+
+    public void setupScene() {
+        Texture2D texture = Content.provideTexture2D("texture.png");
+        Texture2D normalMap = Content.provideTexture2D("texture_n.png");
+        Texture2D specularMap = Content.provideTexture2D("texture_s.png");
+        Material basicMaterial = new Material(texture, normalMap, specularMap, new Vector3f(1, 1, 1), 1, 32);
+
+        FloatVertex[] vertices = new FloatVertex[] { //
+        new FloatVertex(new Vector3f(-40, 0, -40), new Vector2f(0, 0)),// 0
+                new FloatVertex(new Vector3f(-40, 0, 40), new Vector2f(0, 4)), // 1
+                new FloatVertex(new Vector3f(40, 0, 40), new Vector2f(4, 4)), // 2
+                new FloatVertex(new Vector3f(40, 0, -40), new Vector2f(4, 0)),// 3
+
+        };
+        int[] indices = new int[] { 0, 1, 2, 2, 3, 0 };
+        Mesh planeMesh = new Mesh(vertices, indices, true);
+        Mesh boxMesh = Content.provideMesh("box.obj");
+
+        rootNode = new Node();
+        rootNode.setRootNode(true);
+
+        Model plane = new Model(basicMaterial, planeMesh);
+        rootNode.addChild(plane);
+
+        Model box = new Model(basicMaterial, boxMesh);
+        box.position = new Vector3f(0, 1, 20);
+        rootNode.addChild(box);
+
+        DirectionalLight dirLight = new DirectionalLight(Color3f.YELLOW, 0.75f, new Vector3f(0.5f));
+        rootNode.addChild(dirLight);
+        
+        PointLight pointLight0 = new PointLight(new Attenuation(0, 0, 1), Color3f.RED, 1f);
+        rootNode.addChild(pointLight0);
+        
+        PointLight pointLight1 = new PointLight(new Attenuation(0, 0, 1), Color3f.BLUE, 1f);
+        rootNode.addChild(pointLight1);
+        
+        PointLight pointLight2 = new PointLight(new Attenuation(1f, .001f, .01f), Color3f.GREEN, 1f);
+        pointLight2.position = new Vector3f(0, 5, 20);
+        rootNode.addChild(pointLight2);
+        
+        SpotLight spotLight = new SpotLight(new Attenuation(1, 0.4f, 0.04f), new Vector3f(0, .8f, 6), 1f, new Vector3f(
+                .5f), .7f);
+        rootNode.addChild(spotLight);
+    }
 
     public static void clear() {
         // TODO: Stencil buffer.
@@ -122,7 +174,7 @@ public class Renderer {
         glVertexAttribPointer(1, 2, GL_FLOAT, false, Float.BYTES * 4, Float.BYTES * 2);
 
         glBindVertexArray(0);
-        
+
         buffer3D = new FrameBuffer(Display.getWidth(), Display.getHeight(), true);
     }
 
@@ -148,7 +200,7 @@ public class Renderer {
     }
 
     private void renderGUI() {
-        
+
     }
 
     private void quadRender() {
