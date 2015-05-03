@@ -46,21 +46,21 @@ public class Scene {
 
     private PhongShader phong = new PhongShader();
 
-    // private Mesh triangle = Content.importObj("models", "box.obj");
+    // private Mesh triangle = Content.importObj("box.obj");
 
     private FloatVertex[] vertices = new FloatVertex[] { //
-    new FloatVertex(new Vector3f(-10, 0, -10), new Vector2f(0, 0)),// 0
-            new FloatVertex(new Vector3f(-10, 0, 10), new Vector2f(0, 1)), // 1
-            new FloatVertex(new Vector3f(10, 0, 10), new Vector2f(1, 1)), // 2
-            new FloatVertex(new Vector3f(10, 0, -10), new Vector2f(1, 0)),// 3
+    new FloatVertex(new Vector3f(-40, 0, -40), new Vector2f(0, 0)),// 0
+            new FloatVertex(new Vector3f(-40, 0, 40), new Vector2f(0, 4)), // 1
+            new FloatVertex(new Vector3f(40, 0, 40), new Vector2f(4, 4)), // 2
+            new FloatVertex(new Vector3f(40, 0, -40), new Vector2f(4, 0)),// 3
 
     };
     private int[] indices = new int[] { 0, 1, 2, 2, 3, 0 };
     private Mesh triangle = new Mesh(vertices, indices, true);
 
-    private Texture2D texture = Content.importTexture2D("textures", "texture.png");
-    private Texture2D normalMap = Content.importTexture2D("textures", "texture_n.png");
-    private Texture2D specularMap = Content.importTexture2D("textures", "texture_s.png");
+    private Texture2D texture = Content.provideTexture2D("texture.png");
+    private Texture2D normalMap = Content.provideTexture2D("texture_n.png");
+    private Texture2D specularMap = Content.provideTexture2D("texture_s.png");
     private Material material = new Material(texture, normalMap, specularMap, new Vector3f(1, 1, 1), 1, 32);
     private Camera camera = new Camera();
 
@@ -70,10 +70,10 @@ public class Scene {
             0, 1), new Vector3f(0, .8f, 0));
     private PointLight pointLight2 = new PointLight(new BaseLight(new Vector3f(0, .25f, 1), 0.1f), new Attenuation(0,
             0, 1), new Vector3f(0, .8f, 5));
-    private PointLight pointLight3 = new PointLight(new BaseLight(new Vector3f(.25f, 1f, .1f), 0.4f), new Attenuation(1,
-            .1f, .08f), new Vector3f(0, 2f, -4));
+    private PointLight pointLight3 = new PointLight(new BaseLight(new Vector3f(1f, .75f, .5f), 1f), new Attenuation(1f,
+            .001f, .01f), new Vector3f(0, 5f, 20));
     private SpotLight flashLight = new SpotLight(new PointLight(new BaseLight(new Vector3f(0, .5f, 1), 1f),
-            new Attenuation(0, 0, 1), new Vector3f(0, .8f, 6)), new Vector3f(1), 0.7f);
+            new Attenuation(1, 0.4f, 0.04f), new Vector3f(0, .8f, 6)), new Vector3f(1), 0.7f);
 
     private float time;
 
@@ -128,8 +128,8 @@ public class Scene {
         phong.setSpotLight(0, flashLight);
 
         phong.setEyePosition(camera.getPos());
-        phong.setAmbientLight(new Vector3f(0.1f));
-        phong.setDirectionalLight(directionalLight);
+        phong.setAmbientLight(new Vector3f(0.025f));
+        //phong.setDirectionalLight(directionalLight);
         phong.setModel(transform);
         phong.setView(view);
         phong.setProjection(projection);

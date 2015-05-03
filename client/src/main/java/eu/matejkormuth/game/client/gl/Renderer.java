@@ -54,13 +54,14 @@ public class Renderer {
             1, -1, 1, 0, //
             1, 1, 1, 1 });
     private static final IntBuffer quadIndices = BufferUtils.createIntBuffer(6).put(new int[] { 0, 1, 2, 2, 3, 0 });
-    private Program quadShader = new Program(Content.importShader(ShaderType.VERTEX, "shaders", "quad.vs"),
-            Content.importShader(ShaderType.FRAGMENT, "shaders", "quad.fs"));
+    private Program quadShader = new Program(Content.provideShader(ShaderType.VERTEX, "quad.vs"),
+            Content.provideShader(ShaderType.FRAGMENT, "quad.fs"));
     private int quadVAO;
     private int quadVBO;
     private int quadEBO;
 
-    private FrameBuffer buffer3D = new FrameBuffer(Display.getWidth(), Display.getHeight());
+    private FrameBuffer buffer3D;
+    private FrameBuffer buffer2D;
 
     // Currently rendered scene.
     private Scene scene;
@@ -98,6 +99,7 @@ public class Renderer {
 
         init();
         initScene();
+        // initGUI();
         initQuadRender();
     }
 
@@ -120,27 +122,39 @@ public class Renderer {
         glVertexAttribPointer(1, 2, GL_FLOAT, false, Float.BYTES * 4, Float.BYTES * 2);
 
         glBindVertexArray(0);
+        
+        buffer3D = new FrameBuffer(Display.getWidth(), Display.getHeight(), true);
     }
 
     private void initScene() {
         scene = new Scene();
         scene.init();
-        
+
     }
 
     public void render() {
-        //buffer3D.bind();
+        buffer3D.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
         scene.render();
-        //FrameBuffer.SCREEN.bind();
-        //glClear(GL_COLOR_BUFFER_BIT);
-        //this.quadRender();
+        FrameBuffer.SCREEN.bind();
+        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glDisable(GL_CULL_FACE);
+        glDisable(GL_DEPTH_TEST);
+        this.quadRender();
+        Program.unbind();
+        this.renderGUI();
+    }
+
+    private void renderGUI() {
+        
     }
 
     private void quadRender() {
-        quadShader.use();
-        quadShader.setUniformi("sampler", 0);
         glBindVertexArray(quadVAO);
+        quadShader.use();
+        quadShader.setUniformi("renderTex", 0);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, buffer3D.getTextureId());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

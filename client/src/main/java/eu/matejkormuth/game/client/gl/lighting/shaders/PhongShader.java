@@ -40,29 +40,29 @@ import eu.matejkormuth.game.shared.math.Matrix4f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
 public class PhongShader extends Program {
-    
+
     public static final int MAX_POINT_LIGHTS = 4;
     public static final int MAX_SPOT_LIGHTS = 4;
-    
+
     public PhongShader() {
-        super(Content.importShader(ShaderType.VERTEX, "shaders", "phong.vs"), Content.importShader(ShaderType.FRAGMENT,
-                "shaders", "phong.fs"));
+        super(Content.importShader(ShaderType.VERTEX, "phong.vs"), Content
+                .importShader(ShaderType.FRAGMENT, "phong.fs"));
     }
 
     public void setModel(Matrix4f transform) {
         setUniform("model", transform);
     }
-    
+
     public void setView(Matrix4f transform) {
         setUniform("view", transform);
     }
-    
+
     public void setProjection(Matrix4f projection) {
         setUniform("projection", projection);
     }
 
     public void setMaterial(Material material) {
-        if(material.getTexture() != null) {
+        if (material.getTexture() != null) {
             material.getTexture().bind(0);
         } else {
             Texture2D.unbind();
@@ -71,15 +71,15 @@ public class PhongShader extends Program {
         setSpecularIntensity(material.getSpecularIntensity());
         setSpecularPower(material.getSpecularPower());
     }
-    
+
     public void setPointLight(int index, PointLight pointLight) {
         setUniform("pointLights[" + index + "]", pointLight);
     }
-    
+
     public void setSpotLight(int index, SpotLight spotLight) {
         setUniform("spotLights[" + index + "]", spotLight);
     }
-    
+
     private void setUniform(String uniform, SpotLight spotLight) {
         setUniform(uniform + ".pointLight", spotLight.getPointLight());
         setUniform(uniform + ".direction", spotLight.getDirection());
@@ -89,23 +89,23 @@ public class PhongShader extends Program {
     public void setAmbientLight(Vector3f light) {
         setUniform("ambientLight", light);
     }
-    
+
     public void setDirectionalLight(DirectionalLight light) {
         setUniform("directionalLight", light);
     }
-    
+
     public void setEyePosition(Vector3f eyePosition) {
         setUniform("eyePos", eyePosition);
     }
-    
+
     private void setSpecularIntensity(float intensity) {
         setUniformf("specularIntensity", intensity);
     }
-    
+
     private void setSpecularPower(float power) {
         setUniformf("specularPower", power);
     }
-    
+
     private void setUniform(String uniform, PointLight light) {
         setUniform(uniform + ".base", light.getBase());
         setUniform(uniform + ".atten", light.getAtten());

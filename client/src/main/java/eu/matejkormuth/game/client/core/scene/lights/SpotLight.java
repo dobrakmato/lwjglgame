@@ -24,7 +24,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.core.scene;
+package eu.matejkormuth.game.client.core.scene.lights;
 
-public class SceneGraphReader {
+import eu.matejkormuth.game.client.core.scene.Property;
+import eu.matejkormuth.game.client.gl.lighting.Attenuation;
+import eu.matejkormuth.game.shared.math.Vector3f;
+
+public class SpotLight {
+
+    @Property
+    public Attenuation attenuation = new Attenuation(0, 0, 1);
+    @Property
+    public Vector3f color = new Vector3f(1);
+    @Property
+    public float intensity = 0.75f;
+    @Property
+    public Vector3f direction = new Vector3f(1, 1, 1);
 }

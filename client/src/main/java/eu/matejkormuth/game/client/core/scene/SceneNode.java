@@ -155,4 +155,8 @@ public class SceneNode {
             }
         }
     }
+    
+    public void render() {
+        
+    }
 }
