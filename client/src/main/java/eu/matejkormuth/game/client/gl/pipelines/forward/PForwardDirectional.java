@@ -35,8 +35,8 @@ import eu.matejkormuth.game.shared.math.Color3f;
 import eu.matejkormuth.game.shared.math.Matrix4f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
-public class ForwardDirectional extends Program implements IProgram {
-    public ForwardDirectional() {
+public class PForwardDirectional extends Program implements IProgram {
+    public PForwardDirectional() {
         super(Content.provideShader(ShaderType.VERTEX, "forward", "forward-directional.vs"), Content.provideShader(
                 ShaderType.FRAGMENT, "forward", "forward-directional.fs"));
     }

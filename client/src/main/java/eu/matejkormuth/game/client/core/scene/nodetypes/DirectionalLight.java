@@ -28,23 +28,40 @@ package eu.matejkormuth.game.client.core.scene.nodetypes;
 
 import eu.matejkormuth.game.client.core.scene.Node;
 import eu.matejkormuth.game.client.core.scene.Property;
+import eu.matejkormuth.game.client.gl.IProgram;
+import eu.matejkormuth.game.client.gl.pipelines.forward.PForwardDirectional;
+import eu.matejkormuth.game.shared.math.Color3f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
-public class DirectionalLight extends Node {
+public class DirectionalLight extends Node implements ForwardLightSource {
+
+    private static PForwardDirectional forwardProgram = new PForwardDirectional();
 
     public DirectionalLight() {
     }
 
-    public DirectionalLight(Vector3f color, float intensity, Vector3f direction) {
+    public DirectionalLight(Color3f color, float intensity, Vector3f direction) {
         this.color = color;
         this.intensity = intensity;
         this.direction = direction;
     }
 
     @Property
-    public Vector3f color = new Vector3f(1, 1, .75f);
+    public Color3f color = new Color3f(1, 1, .75f);
     @Property
     public float intensity = 0.75f;
     @Property
     public Vector3f direction = new Vector3f(.5f, .5f, .5f);
+
+    @Override
+    public IProgram getForwardProgram() {
+        return forwardProgram;
+    }
+
+    @Override
+    public void setLightUniforms() {
+        forwardProgram.setColor(color);
+        forwardProgram.setIntensity(intensity);
+        forwardProgram.setDirection(direction);
+    }
 }

@@ -29,6 +29,7 @@ package eu.matejkormuth.game.client.core.scene;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.matejkormuth.game.client.core.scene.nodetypes.ForwardLightSource;
 import eu.matejkormuth.game.client.gl.IProgram;
 import eu.matejkormuth.game.client.gl.Renderer;
 import eu.matejkormuth.game.shared.Updatable;
@@ -202,6 +203,21 @@ public class Node implements Updatable {
                 this.addChild(childNode);
             }
         }
+    }
+
+    public List<ForwardLightSource> gatherLights(List<ForwardLightSource> lights) {
+        if (lights == null) {
+            lights = new ArrayList<>(20);
+        }
+
+        if (this instanceof ForwardLightSource) {
+            lights.add((ForwardLightSource) this);
+        }
+
+        for (Node child : this.children) {
+            child.gatherLights(lights);
+        }
+        return lights;
     }
 
     public void render(IProgram program) {

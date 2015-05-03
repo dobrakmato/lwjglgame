@@ -1,28 +1,28 @@
 /**
- * client - Multiplayer Java game engine.
- * Copyright (c) 2015, Matej Kormuth <http://www.github.com/dobrakmato>
- * All rights reserved.
+ * client - Multiplayer Java game engine. Copyright (c) 2015, Matej Kormuth
+ * <http://www.github.com/dobrakmato> All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 package eu.matejkormuth.game.client.gl;
 
@@ -40,20 +40,22 @@ import org.slf4j.LoggerFactory;
 
 import eu.matejkormuth.game.client.content.Content;
 import eu.matejkormuth.game.client.core.scene.Node;
+import eu.matejkormuth.game.client.core.scene.components.light.CirclePosComponent;
 import eu.matejkormuth.game.client.core.scene.nodetypes.Camera;
 import eu.matejkormuth.game.client.core.scene.nodetypes.DirectionalLight;
+import eu.matejkormuth.game.client.core.scene.nodetypes.ForwardLightSource;
 import eu.matejkormuth.game.client.core.scene.nodetypes.Model;
 import eu.matejkormuth.game.client.core.scene.nodetypes.PointLight;
-import eu.matejkormuth.game.client.core.scene.nodetypes.SpotLight;
 import eu.matejkormuth.game.client.gl.lighting.Attenuation;
-import eu.matejkormuth.game.client.gl.pipelines.forward.ForwardAmbient;
-import eu.matejkormuth.game.client.gl.pipelines.forward.ForwardDirectional;
+import eu.matejkormuth.game.client.gl.pipelines.forward.PForwardAmbient;
 import eu.matejkormuth.game.shared.math.Color3f;
+import eu.matejkormuth.game.shared.math.Matrix4f;
 import eu.matejkormuth.game.shared.math.Vector2f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
 
 public class Renderer {
 
@@ -84,8 +86,7 @@ public class Renderer {
     private Color3f ambientColor = Color3f.WHITE.darker(0.5f);
 
     // Forward rendering shaders.
-    private ForwardAmbient forwardAmbient = new ForwardAmbient();
-    private ForwardDirectional forwardDirectional = new ForwardDirectional();
+    private PForwardAmbient forwardAmbient = new PForwardAmbient(); // Program
 
     public void load0() {
         Texture2D texture = Content.provideTexture2D("texture.png");
@@ -115,22 +116,31 @@ public class Renderer {
         box.position = new Vector3f(0, 1, 20);
         rootNode.addChild(box);
 
-        DirectionalLight dirLight = new DirectionalLight(Color3f.YELLOW, 0.75f, new Vector3f(0.5f));
+        DirectionalLight dirLight = new DirectionalLight(Color3f.WHITE.darker(0.75f), 0.7f, new Vector3f(0.5f));
         rootNode.addChild(dirLight);
 
-        PointLight pointLight0 = new PointLight(new Attenuation(0, 0, 1), Color3f.RED, 1f);
-        rootNode.addChild(pointLight0);
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                PointLight pointLight0 = new PointLight(new Attenuation(0, 0, 1), new Color3f((float) Math.random(),
+                        (float) Math.random(), (float) Math.random()), 1f);
+                pointLight0.position = new Vector3f(0 + i * 4, 1, -10 - j * 4);
+                pointLight0.addComponent(new CirclePosComponent());
+                rootNode.addChild(pointLight0);
+            }
+        }
 
         PointLight pointLight1 = new PointLight(new Attenuation(0, 0, 1), Color3f.BLUE, 1f);
+        pointLight1.position = new Vector3f(0, 1, 10);
         rootNode.addChild(pointLight1);
 
         PointLight pointLight2 = new PointLight(new Attenuation(1f, .001f, .01f), Color3f.GREEN, 1f);
         pointLight2.position = new Vector3f(0, 5, 20);
         rootNode.addChild(pointLight2);
 
-        SpotLight spotLight = new SpotLight(new Attenuation(1, 0.4f, 0.04f), new Vector3f(0, .8f, 6), 1f, new Vector3f(
-                .5f), .7f);
-        rootNode.addChild(spotLight);
+        // SpotLight spotLight = new SpotLight(new Attenuation(1, 0.4f, 0.04f),
+        // new Color3f(0, .8f, 6), 1f, new Vector3f(
+        // .5f), .7f);
+        // rootNode.addChild(spotLight);
 
         Camera camera = new Camera();
         rootNode.addChild(camera);
@@ -202,49 +212,59 @@ public class Renderer {
         forwardAmbient.use();
         forwardAmbient.setAmbientColor(ambientColor);
         forwardAmbient.setProjectionMatrix(this.camera.getProjectionMatrix());
-
-        forwardDirectional.use();
-        forwardDirectional.setProjectionMatrix(this.camera.getProjectionMatrix());
-        forwardDirectional.setColor(new Color3f(1, .8f, .4f));
-        forwardDirectional.setIntensity(0.7f);
-        forwardDirectional.setDirection(new Vector3f(1));
     }
 
     public void render() {
         buffer3D.bind();
+
+        List<ForwardLightSource> lights = rootNode.gatherLights(null);
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
-        // scene.render();
 
         forwardAmbient.use();
         forwardAmbient.setViewMatrix(this.camera.getViewMatrix());
-        
+
         rootNode.render(forwardAmbient);
 
-        // forwardAmbient.setEyePosition(this.camera.getPosition());
-
-        // phong.use();
-        // phong.setAmbientLight(ambientColor);
-        // phong.setProjection(this.camera.getProjectionMatrix());
-        // phong.setView(this.camera.getViewMatrix());
-        // phong.setEyePosition(this.camera.getPosition());
-        
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         glDepthMask(false);
         glDepthFunc(GL_EQUAL);
 
-        forwardDirectional.use();
-        forwardDirectional.setViewMatrix(this.camera.getViewMatrix());
-        forwardDirectional.setEyePos(this.camera.getPosition());
+        Matrix4f projection = this.camera.getProjectionMatrix();
+        Matrix4f view = this.camera.getViewMatrix();
+        Vector3f eyePos = this.camera.getPosition();
 
-        rootNode.render(forwardDirectional);
+        for (ForwardLightSource l : lights) {
+            IProgram program = l.getForwardProgram();
+            program.use();
+            program.setProjectionMatrix(projection);
+            program.setViewMatrix(view);
+            program.setEyePos(eyePos);
+            l.setLightUniforms();
+            rootNode.render(program);
+        }
+
+        /*
+         * forwardDirectional.use();
+         * forwardDirectional.setViewMatrix(this.camera.getViewMatrix());
+         * forwardDirectional.setEyePos(this.camera.getPosition());
+         * 
+         * rootNode.render(forwardDirectional);
+         * 
+         * forwardPoint.use();
+         * forwardPoint.setViewMatrix(this.camera.getViewMatrix());
+         * forwardPoint.setEyePos(this.camera.getPosition());
+         * 
+         * rootNode.render(forwardPoint);
+         */
 
         glDepthFunc(GL_LESS);
         glDepthMask(true);
         glDisable(GL_BLEND);
-        
+
         FrameBuffer.SCREEN.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDisable(GL_CULL_FACE);

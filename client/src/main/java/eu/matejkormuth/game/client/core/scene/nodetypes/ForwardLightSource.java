@@ -24,44 +24,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.gl.pipelines.forward;
+package eu.matejkormuth.game.client.core.scene.nodetypes;
 
-import eu.matejkormuth.game.client.content.Content;
 import eu.matejkormuth.game.client.gl.IProgram;
-import eu.matejkormuth.game.client.gl.Material;
-import eu.matejkormuth.game.client.gl.Program;
-import eu.matejkormuth.game.client.gl.ShaderType;
-import eu.matejkormuth.game.shared.math.Color3f;
-import eu.matejkormuth.game.shared.math.Matrix4f;
 
-public class ForwardAmbient extends Program implements IProgram {
-
-    public ForwardAmbient() {
-        super(Content.provideShader(ShaderType.VERTEX, "forward", "forward-ambient.vs"), Content.provideShader(
-                ShaderType.FRAGMENT, "forward", "forward-ambient.fs"));
-    }
-
-    public void setAmbientColor(Color3f color) {
-        this.setUniform("ambientColor", color.x, color.y, color.z);
-    }
-
-    @Override
-    public void setModelMatrix(Matrix4f model) {
-        this.setUniform("model", model);
-    }
+public interface ForwardLightSource {
+    public IProgram getForwardProgram();
     
-    @Override
-    public void setViewMatrix(Matrix4f view) {
-        this.setUniform("view", view);
-    }
-    
-    @Override
-    public void setProjectionMatrix(Matrix4f projection) {
-        this.setUniform("projection", projection);
-    }
-
-    @Override
-    public void setMaterial(Material material) {
-        // This shader doesn't use this.
-    }
+    // Rendering process.
+    public void setLightUniforms();
 }

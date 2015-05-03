@@ -24,36 +24,50 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package client;
+package eu.matejkormuth.game.client.gl.pipelines.forward;
 
-import org.junit.Test;
-
-import eu.matejkormuth.game.client.core.scene.Node;
-import eu.matejkormuth.game.client.core.scene.NodeGroup;
-import eu.matejkormuth.game.client.core.scene.SceneGraphWriter;
-import eu.matejkormuth.game.client.core.scene.nodetypes.PointLight;
+import eu.matejkormuth.game.client.content.Content;
+import eu.matejkormuth.game.client.gl.IProgram;
+import eu.matejkormuth.game.client.gl.Material;
+import eu.matejkormuth.game.client.gl.Program;
+import eu.matejkormuth.game.client.gl.ShaderType;
+import eu.matejkormuth.game.shared.math.Color3f;
+import eu.matejkormuth.game.shared.math.Matrix4f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
-public class SceneGraphWriterTest {
+public class PForwardAmbient extends Program implements IProgram {
 
-    @Test
-    public void test() {
-        SceneGraphWriter writer = new SceneGraphWriter();
-        Node root = new Node();
-        root.setRootNode(true);
-        PointLight light = new PointLight();
-        light.position = new Vector3f(1, 2, 3);
-        root.addChild(light);
-        NodeGroup group = new NodeGroup();
-        PointLight light2 = new PointLight();
-        light.position = new Vector3f(4, 5, 6);
-        PointLight light3 = new PointLight();
-        light.position = new Vector3f(1, -2, 1);
-        group.addChild(light2);
-        group.addChild(light3);
-        root.addChild(group);
-        
-        System.out.println(writer.write(root, "scene 1"));
+    public PForwardAmbient() {
+        super(Content.provideShader(ShaderType.VERTEX, "forward", "forward-ambient.vs"), Content.provideShader(
+                ShaderType.FRAGMENT, "forward", "forward-ambient.fs"));
     }
 
+    public void setAmbientColor(Color3f color) {
+        this.setUniform("ambientColor", color.x, color.y, color.z);
+    }
+
+    @Override
+    public void setModelMatrix(Matrix4f model) {
+        this.setUniform("model", model);
+    }
+    
+    @Override
+    public void setViewMatrix(Matrix4f view) {
+        this.setUniform("view", view);
+    }
+    
+    @Override
+    public void setProjectionMatrix(Matrix4f projection) {
+        this.setUniform("projection", projection);
+    }
+
+    @Override
+    public void setMaterial(Material material) {
+        // This shader doesn't use this uniform.
+    }
+
+    @Override
+    public void setEyePos(Vector3f eyePos) {
+        // This shader doesn't use this uniform.
+    }
 }

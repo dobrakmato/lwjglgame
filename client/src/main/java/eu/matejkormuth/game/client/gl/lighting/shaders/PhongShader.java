@@ -133,4 +133,10 @@ public class PhongShader extends Program implements IProgram {
         setUniform(uniform + ".color", base.getColor());
         setUniformf(uniform + ".intensity", base.getIntensity());
     }
+
+    @Override
+    public void setEyePos(Vector3f eyePos) {
+        // TODO Auto-generated method stub
+        
+    }
 }

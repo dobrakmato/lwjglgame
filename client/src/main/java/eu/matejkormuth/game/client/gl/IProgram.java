@@ -27,6 +27,7 @@
 package eu.matejkormuth.game.client.gl;
 
 import eu.matejkormuth.game.shared.math.Matrix4f;
+import eu.matejkormuth.game.shared.math.Vector3f;
 
 public interface IProgram {
     public void setViewMatrix(Matrix4f matrix);
@@ -36,4 +37,8 @@ public interface IProgram {
     public void setModelMatrix(Matrix4f matrix);
 
     public void setMaterial(Material material);
+
+    public void use();
+
+    public void setEyePos(Vector3f eyePos);
 }

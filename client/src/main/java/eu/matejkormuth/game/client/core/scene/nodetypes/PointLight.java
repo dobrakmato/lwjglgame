@@ -28,15 +28,19 @@ package eu.matejkormuth.game.client.core.scene.nodetypes;
 
 import eu.matejkormuth.game.client.core.scene.Node;
 import eu.matejkormuth.game.client.core.scene.Property;
+import eu.matejkormuth.game.client.gl.IProgram;
 import eu.matejkormuth.game.client.gl.lighting.Attenuation;
-import eu.matejkormuth.game.shared.math.Vector3f;
+import eu.matejkormuth.game.client.gl.pipelines.forward.PForwardPoint;
+import eu.matejkormuth.game.shared.math.Color3f;
 
-public class PointLight extends Node {
+public class PointLight extends Node implements ForwardLightSource {
+
+    private static PForwardPoint forwardProgram = new PForwardPoint();
 
     public PointLight() {
     }
 
-    public PointLight(Attenuation attenuation, Vector3f color, float intensity) {
+    public PointLight(Attenuation attenuation, Color3f color, float intensity) {
         this.attenuation = attenuation;
         this.color = color;
         this.intensity = intensity;
@@ -45,8 +49,22 @@ public class PointLight extends Node {
     @Property
     public Attenuation attenuation = new Attenuation(0, 0, 1);
     @Property
-    public Vector3f color = new Vector3f(1);
+    public Color3f color = new Color3f(1, 1, 1);
     @Property
     public float intensity = 0.75f;
+
+    @Override
+    public IProgram getForwardProgram() {
+        return forwardProgram;
+    }
+
+    @Override
+    public void setLightUniforms() {
+        forwardProgram.setPosition(position);
+        forwardProgram.setIntensity(intensity);
+        forwardProgram.setColor(color);
+        // Beware! This setter uses color and intensity, so It has to be last.
+        forwardProgram.setAttenuation(attenuation);
+    }
 
 }
