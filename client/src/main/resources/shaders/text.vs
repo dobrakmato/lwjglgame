@@ -1,14 +1,13 @@
 #version 330
 
 // Input attribures.
-layout (location = 0) in vec2 position;
-layout (location = 1) in vec2 texCoord;
+layout (location = 0) in vec4 coord;
 
 // Oputput.
 out vec2 texCoord0;
 
 // Main method.
 void main() {
-	texCoord0 = texCoord;
-	gl_Position = vec4(position.x, position.y, 0, 1);
+	texCoord0 = coord.zw;
+	gl_Position = vec4(coord.xy, 0, 1);
 }

@@ -1,28 +1,28 @@
 /**
- * client - Multiplayer Java game engine.
- * Copyright (c) 2015, Matej Kormuth <http://www.github.com/dobrakmato>
- * All rights reserved.
+ * client - Multiplayer Java game engine. Copyright (c) 2015, Matej Kormuth
+ * <http://www.github.com/dobrakmato> All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 package eu.matejkormuth.game.client.gl;
 
@@ -39,6 +39,8 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import java.nio.FloatBuffer;
 
 public class Program implements Disposable {
+
+    private static int currentProgram = 0;
 
     private int program;
     private Shader vertexShader;
@@ -67,10 +69,16 @@ public class Program implements Disposable {
     }
 
     public void use() {
+        currentProgram = this.program;
         glUseProgram(this.program);
     }
 
     public void setUniformi(String uniform, int value) {
+        if (this.program != currentProgram) {
+            throw new IllegalStateException(
+                    "Can't set uniform of this program because another program is currently in use! Call use() method before setting uniforms!");
+        }
+
         if (this.uniformLocations.containsKey(uniform)) {
             glUniform1i(this.uniformLocations.get(uniform), value);
         } else {
@@ -84,6 +92,11 @@ public class Program implements Disposable {
     }
 
     public void setUniformf(String uniform, float value) {
+        if (this.program != currentProgram) {
+            throw new IllegalStateException(
+                    "Can't set uniform of this program because another program is currently in use! Call use() method before setting uniforms!");
+        }
+        
         if (this.uniformLocations.containsKey(uniform)) {
             glUniform1f(this.uniformLocations.get(uniform), value);
         } else {
@@ -101,6 +114,11 @@ public class Program implements Disposable {
     }
 
     public void setUniform(String uniform, float v0, float v1, float v2) {
+        if (this.program != currentProgram) {
+            throw new IllegalStateException(
+                    "Can't set uniform of this program because another program is currently in use! Call use() method before setting uniforms!");
+        }
+        
         if (this.uniformLocations.containsKey(uniform)) {
             glUniform3f(this.uniformLocations.get(uniform), v0, v1, v2);
         } else {
@@ -130,6 +148,11 @@ public class Program implements Disposable {
     }
 
     public void setUniform(String uniform, FloatBuffer matrix4) {
+        if (this.program != currentProgram) {
+            throw new IllegalStateException(
+                    "Can't set uniform of this program because another program is currently in use! Call use() method before setting uniforms!");
+        }
+        
         if (this.uniformLocations.containsKey(uniform)) {
             glUniformMatrix4(this.uniformLocations.get(uniform), true, matrix4);
         } else {
@@ -151,8 +174,9 @@ public class Program implements Disposable {
         vertexShader = null;
         fragmentShader = null;
     }
-    
+
     public static void unbind() {
+        currentProgram = 0;
         glUseProgram(0);
     }
 

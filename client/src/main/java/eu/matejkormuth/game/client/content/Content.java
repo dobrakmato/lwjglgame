@@ -27,8 +27,10 @@
 package eu.matejkormuth.game.client.content;
 
 import eu.matejkormuth.game.client.content.loaders.AWTImageLoader;
+import eu.matejkormuth.game.client.content.loaders.DefaultFontLoader;
 import eu.matejkormuth.game.client.content.loaders.OBJLoader;
 import eu.matejkormuth.game.client.core.scene.Node;
+import eu.matejkormuth.game.client.gl.Font;
 import eu.matejkormuth.game.client.gl.Mesh;
 import eu.matejkormuth.game.client.gl.Shader;
 import eu.matejkormuth.game.client.gl.ShaderType;
@@ -51,19 +53,21 @@ public class Content {
     public static final String DIR_SHADERS = "shaders";
     public static final String DIR_LEVELS = "levels";
     public static final String DIR_GUI = "gui";
+    public static final String DIR_FONTS = "fonts";
 
     private static Path root;
     private static ContentCache cache = new ContentCache();
-    
+
     private static AWTImageLoader awtLoader = new AWTImageLoader();
     private static OBJLoader objLoader = new OBJLoader();
+    private static DefaultFontLoader fontLoader = new DefaultFontLoader();
 
     public static void setRoot(Path path) {
         root = path;
     }
 
     public static Shader provideShader(ShaderType type, String... more) {
-        if(cache.has(more)) {
+        if (cache.has(more)) {
             return (Shader) cache.get(more);
         } else {
             return (Shader) cache.load(more, importShader(type, more));
@@ -77,9 +81,9 @@ public class Content {
     public static Shader importShader(ShaderType type, Path path) {
         return new Shader(type, readText(path));
     }
-    
+
     public static Texture2D provideTexture2D(String... more) {
-        if(cache.has(more)) {
+        if (cache.has(more)) {
             return (Texture2D) cache.get(more);
         } else {
             return (Texture2D) cache.load(more, importTexture2D(more));
@@ -99,15 +103,31 @@ public class Content {
     }
 
     public static Mesh provideMesh(String... more) {
-        if(cache.has(more)) {
+        if (cache.has(more)) {
             return (Mesh) cache.get(more);
         } else {
             return (Mesh) cache.load(more, importMesh(more));
         }
     }
-    
+
     public static Mesh importMesh(Path path) {
         return objLoader.load(path);
+    }
+
+    public static Font provideFont(String... more) {
+        if (cache.has(more)) {
+            return (Font) cache.get(more);
+        } else {
+            return (Font) cache.load(more, importFont(more));
+        }
+    }
+
+    public static Font importFont(String... more) {
+        return importFont(getPath(DIR_FONTS, more));
+    }
+
+    public static Font importFont(Path path) {
+        return fontLoader.load(path);
     }
 
     public static Node importScene(String... more) {

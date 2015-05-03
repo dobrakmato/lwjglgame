@@ -24,27 +24,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.core.scene.nodetypes;
+package eu.matejkormuth.game.client.content.loaders;
 
-import eu.matejkormuth.game.client.core.scene.Node;
-import eu.matejkormuth.game.client.core.scene.Property;
-import eu.matejkormuth.game.shared.math.Vector3f;
+import eu.matejkormuth.game.client.content.ContentLoader;
+import eu.matejkormuth.game.client.gl.Font;
 
-public class DirectionalLight extends Node {
+import java.nio.file.Path;
 
-    public DirectionalLight() {
+public class DefaultFontLoader extends ContentLoader<Font> {
+
+    @Override
+    public Font load(Path path) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    public DirectionalLight(Vector3f color, float intensity, Vector3f direction) {
-        this.color = color;
-        this.intensity = intensity;
-        this.direction = direction;
-    }
-
-    @Property
-    public Vector3f color = new Vector3f(1, 1, .75f);
-    @Property
-    public float intensity = 0.75f;
-    @Property
-    public Vector3f direction = new Vector3f(.5f, .5f, .5f);
 }

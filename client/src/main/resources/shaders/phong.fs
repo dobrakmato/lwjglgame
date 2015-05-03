@@ -2,7 +2,6 @@
 
 const int MAX_POINT_LIGHTS = 4;
 const int MAX_SPOT_LIGHTS = 4;
-const int MAX_LIGHT_RANGE = 1024;
 
 struct Attenuation {
 	float constant;

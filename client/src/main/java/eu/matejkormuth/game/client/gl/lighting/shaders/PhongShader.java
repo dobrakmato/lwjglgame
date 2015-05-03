@@ -27,6 +27,7 @@
 package eu.matejkormuth.game.client.gl.lighting.shaders;
 
 import eu.matejkormuth.game.client.content.Content;
+import eu.matejkormuth.game.client.gl.IProgram;
 import eu.matejkormuth.game.client.gl.Material;
 import eu.matejkormuth.game.client.gl.Program;
 import eu.matejkormuth.game.client.gl.ShaderType;
@@ -39,7 +40,7 @@ import eu.matejkormuth.game.client.gl.lighting.SpotLight;
 import eu.matejkormuth.game.shared.math.Matrix4f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
-public class PhongShader extends Program {
+public class PhongShader extends Program implements IProgram {
 
     public static final int MAX_POINT_LIGHTS = 4;
     public static final int MAX_SPOT_LIGHTS = 4;
@@ -49,18 +50,22 @@ public class PhongShader extends Program {
                 .importShader(ShaderType.FRAGMENT, "phong.fs"));
     }
 
-    public void setModel(Matrix4f transform) {
+    @Override
+    public void setModelMatrix(Matrix4f transform) {
         setUniform("model", transform);
     }
 
-    public void setView(Matrix4f transform) {
+    @Override
+    public void setViewMatrix(Matrix4f transform) {
         setUniform("view", transform);
     }
 
-    public void setProjection(Matrix4f projection) {
+    @Override
+    public void setProjectionMatrix(Matrix4f projection) {
         setUniform("projection", projection);
     }
 
+    @Override
     public void setMaterial(Material material) {
         if (material.getTexture() != null) {
             material.getTexture().bind(0);

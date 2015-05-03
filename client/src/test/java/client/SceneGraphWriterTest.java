@@ -38,8 +38,7 @@ public class SceneGraphWriterTest {
 
     @Test
     public void test() {
-        StringBuilder builder = new StringBuilder();
-        SceneGraphWriter writer = new SceneGraphWriter(builder);
+        SceneGraphWriter writer = new SceneGraphWriter();
         Node root = new Node();
         root.setRootNode(true);
         PointLight light = new PointLight();
@@ -54,9 +53,7 @@ public class SceneGraphWriterTest {
         group.addChild(light3);
         root.addChild(group);
         
-        writer.write(root, "scene 1");
-
-        System.out.println(builder.toString());
+        System.out.println(writer.write(root, "scene 1"));
     }
 
 }

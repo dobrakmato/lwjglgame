@@ -26,7 +26,10 @@
  */
 package eu.matejkormuth.game.client.core.scene;
 
+import eu.matejkormuth.game.client.gl.Material;
+import eu.matejkormuth.game.client.gl.Mesh;
 import eu.matejkormuth.game.client.gl.lighting.Attenuation;
+import eu.matejkormuth.game.shared.math.Color3f;
 import eu.matejkormuth.game.shared.math.Vector2f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
@@ -49,6 +52,9 @@ public class CtrStringGenerator {
             return Double.toString((double) obj);
         } else if (c == String.class) {
             return "\"" + obj + "\"";
+        } else if (c == Color3f.class) {
+            Color3f v = (Color3f) obj;
+            return "new Color3f(" + v.x + ", " + v.y + ", " + v.z + ")";
         } else if (c == Vector3f.class) {
             Vector3f v = (Vector3f) obj;
             return "new Vector3f(" + v.x + ", " + v.y + ", " + v.z + ")";
@@ -58,6 +64,10 @@ public class CtrStringGenerator {
         } else if (c == Attenuation.class) {
             Attenuation a = (Attenuation) obj;
             return "new Attenuation(" + a.getConstant() + ", " + a.getLinear() + ", " + a.getQuadratic() + ")";
+        } else if (c == Material.class) {
+            return "\"$MATERIAL_RESOURCE_NOT_FOUND\"";
+        } else if (c == Mesh.class) {
+            return "\"$MESH_RESOURCE_NOT_FOUND\"";
         } else {
             throw new RuntimeException("Can't provide initialization code for type " + c.getName());
         }

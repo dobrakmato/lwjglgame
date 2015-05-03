@@ -82,10 +82,10 @@ public class Font {
     }
 
     public static class CharInfo {
-        char id;
-        short x;
-        short y;
-        byte width;
-        byte height;
+        public char id;
+        public short x;
+        public short y;
+        public byte width;
+        public byte height;
     }
 }

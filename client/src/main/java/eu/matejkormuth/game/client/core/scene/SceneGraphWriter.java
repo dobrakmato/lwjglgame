@@ -36,10 +36,10 @@ public class SceneGraphWriter {
     private int currentIdentation = 0;
     private StringBuilder out;
 
-    public SceneGraphWriter(StringBuilder output) {
+    public SceneGraphWriter() {
+        out = new StringBuilder();
         explorer = new SceneExplorer();
         initializator = new CtrStringGenerator();
-        this.out = output;
     }
 
     public void nl() {
@@ -62,7 +62,7 @@ public class SceneGraphWriter {
         return "// " + msg;
     }
 
-    public void write(Node root, String name) {
+    public String write(Node root, String name) {
         if (!root.isRootNode()) {
             throw new IllegalArgumentException("Node must be root node!");
         }
@@ -84,6 +84,7 @@ public class SceneGraphWriter {
         writeRootChildren(root);
         currentIdentation -= 4;
         line("}");
+        return this.out.toString();
     }
 
     private void writeRootChildren(Node root) {

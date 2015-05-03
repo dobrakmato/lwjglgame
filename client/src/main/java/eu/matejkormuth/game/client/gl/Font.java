@@ -26,28 +26,53 @@
  */
 package eu.matejkormuth.game.client.gl;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
+
+import org.lwjgl.BufferUtils;
+
+import eu.matejkormuth.game.client.content.Content;
+import eu.matejkormuth.game.client.content.fileformat.Font.CharInfo;
 import eu.matejkormuth.game.shared.Disposable;
+import eu.matejkormuth.game.shared.math.Color3f;
+
+import java.nio.FloatBuffer;
 
 public class Font implements Disposable {
 
     private Texture2D glyphMap;
     private CharInfo[] chars = new CharInfo[256];
-    
-    public Font() {
-        // TODO Auto-generated constructor stub
+    private static Program shader = new Program(Content.provideShader(ShaderType.VERTEX, "text.vs"),
+            Content.provideShader(ShaderType.FRAGMENT, "text.fs"));
+
+    private int vbo;
+    private int vao;
+
+    public Font(Texture2D glyphMap, CharInfo[] infos) {
+        this.glyphMap = glyphMap;
+
+        vbo = glGenBuffers();
+        vao = glGenVertexArrays();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBindVertexArray(vao);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 4, GL_FLOAT, false, Float.BYTES * 4, 0);
+
     }
-    
+
+    public void renderText(String text, int x, int y, Color3f color) {
+        shader.use();
+        shader.setUniform("color", color);
+        
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(4 * text.length());
+        
+       
+    }
+
     @Override
     public void dispose() {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    public static class CharInfo {
-        char id;
-        char x;
-        char y;
-        byte width;
-        byte height;
+        glyphMap.dispose();
     }
 }

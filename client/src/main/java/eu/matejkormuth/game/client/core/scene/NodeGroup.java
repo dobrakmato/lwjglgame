@@ -27,5 +27,8 @@
 package eu.matejkormuth.game.client.core.scene;
 
 public class NodeGroup extends Node {
-
+    
+    public NodeGroup() {
+        
+    }
 }

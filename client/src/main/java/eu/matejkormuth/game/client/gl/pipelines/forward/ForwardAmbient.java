@@ -24,27 +24,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.core.scene.nodetypes;
+package eu.matejkormuth.game.client.gl.pipelines.forward;
 
-import eu.matejkormuth.game.client.core.scene.Node;
-import eu.matejkormuth.game.client.core.scene.Property;
-import eu.matejkormuth.game.shared.math.Vector3f;
+import eu.matejkormuth.game.client.content.Content;
+import eu.matejkormuth.game.client.gl.IProgram;
+import eu.matejkormuth.game.client.gl.Material;
+import eu.matejkormuth.game.client.gl.Program;
+import eu.matejkormuth.game.client.gl.ShaderType;
+import eu.matejkormuth.game.shared.math.Color3f;
+import eu.matejkormuth.game.shared.math.Matrix4f;
 
-public class DirectionalLight extends Node {
+public class ForwardAmbient extends Program implements IProgram {
 
-    public DirectionalLight() {
+    public ForwardAmbient() {
+        super(Content.provideShader(ShaderType.VERTEX, "forward", "forward-ambient.vs"), Content.provideShader(
+                ShaderType.FRAGMENT, "forward", "forward-ambient.fs"));
     }
 
-    public DirectionalLight(Vector3f color, float intensity, Vector3f direction) {
-        this.color = color;
-        this.intensity = intensity;
-        this.direction = direction;
+    public void setAmbientColor(Color3f color) {
+        this.setUniform("ambientColor", color.x, color.y, color.z);
     }
 
-    @Property
-    public Vector3f color = new Vector3f(1, 1, .75f);
-    @Property
-    public float intensity = 0.75f;
-    @Property
-    public Vector3f direction = new Vector3f(.5f, .5f, .5f);
+    @Override
+    public void setModelMatrix(Matrix4f model) {
+        this.setUniform("model", model);
+    }
+    
+    @Override
+    public void setViewMatrix(Matrix4f view) {
+        this.setUniform("view", view);
+    }
+    
+    @Override
+    public void setProjectionMatrix(Matrix4f projection) {
+        this.setUniform("projection", projection);
+    }
+
+    @Override
+    public void setMaterial(Material material) {
+        // This shader doesn't use this.
+    }
 }

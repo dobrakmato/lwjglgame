@@ -26,25 +26,50 @@
  */
 package eu.matejkormuth.game.client.core.scene.nodetypes;
 
+import org.lwjgl.opengl.Display;
+
 import eu.matejkormuth.game.client.core.scene.Node;
 import eu.matejkormuth.game.client.core.scene.Property;
+import eu.matejkormuth.game.client.gl.ICamera;
+import eu.matejkormuth.game.shared.math.Matrix4f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
-public class DirectionalLight extends Node {
+public class Camera extends Node implements ICamera {
 
-    public DirectionalLight() {
+    @Property
+    public float fov = 70f;
+    @Property
+    public float zNear = 0.1f;
+    @Property
+    public float zFar = 1000f;
+
+    private eu.matejkormuth.game.client.gl.Camera internal;
+    private Matrix4f projection = new Matrix4f().initPerspective(fov, Display.getWidth(), Display.getHeight(), zNear,
+            zFar);
+
+    // TODO: Properties.
+
+    public Camera() {
+        internal = new eu.matejkormuth.game.client.gl.Camera();
     }
 
-    public DirectionalLight(Vector3f color, float intensity, Vector3f direction) {
-        this.color = color;
-        this.intensity = intensity;
-        this.direction = direction;
+    @Override
+    public Matrix4f getProjectionMatrix() {
+        return projection;
     }
 
-    @Property
-    public Vector3f color = new Vector3f(1, 1, .75f);
-    @Property
-    public float intensity = 0.75f;
-    @Property
-    public Vector3f direction = new Vector3f(.5f, .5f, .5f);
+    @Override
+    public Matrix4f getViewMatrix() {
+        return internal.getViewMatrix();
+    }
+
+    @Override
+    public void update(float delta) {
+        internal.doInput();
+    }
+
+    @Override
+    public Vector3f getPosition() {
+        return internal.getPos();
+    }
 }

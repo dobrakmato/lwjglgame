@@ -72,9 +72,9 @@ public class Scene {
             0, 1), new Vector3f(0, .8f, 5));
     private PointLight pointLight3 = new PointLight(new BaseLight(new Vector3f(1f, .75f, .5f), 1f), new Attenuation(1f,
             .001f, .01f), new Vector3f(0, 5f, 20));
-    private SpotLight flashLight = new SpotLight(new PointLight(new BaseLight(new Vector3f(0, .5f, 1), 1f),
-            new Attenuation(1, 0.4f, 0.04f), new Vector3f(0, .8f, 6)), new Vector3f(1), 0.7f);
-
+    private SpotLight flashLight = new SpotLight(new PointLight(new BaseLight(new Vector3f(0, 1f, 1), 1f),
+            new Attenuation(1, 0.7f, 0.004f), new Vector3f(0, .8f, 6)), new Vector3f(1), 0.45f);
+    
     private float time;
 
     public void init() {
@@ -130,16 +130,16 @@ public class Scene {
         phong.setEyePosition(camera.getPos());
         phong.setAmbientLight(new Vector3f(0.025f));
         //phong.setDirectionalLight(directionalLight);
-        phong.setModel(transform);
-        phong.setView(view);
-        phong.setProjection(projection);
+        //phong.setModel(transform);
+        //phong.setView(view);
+        //phong.setProjection(projection);
         phong.setMaterial(material);
         texture.bind(0);
         normalMap.bind(1);
         specularMap.bind(2);
         triangle.draw();
         
-        phong.setModel(transform);
+        //phong.setModel(transform);
     }
 
     public void update() {

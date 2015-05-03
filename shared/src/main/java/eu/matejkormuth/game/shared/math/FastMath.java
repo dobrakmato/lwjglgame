@@ -52,4 +52,8 @@ public class FastMath {
     public static float cos(float degrees) {
         return sinLookup((int) ((degrees + 90f) * precision + 0.5f));
     }
+    
+    public static float clamp(float val, float min, float max) {
+        return Math.max(min, Math.min(max, val));
+    }
 }
