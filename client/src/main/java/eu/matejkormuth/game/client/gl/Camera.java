@@ -41,6 +41,9 @@ public class Camera {
     private Vector3f forward;
     private Vector3f up;
     private float mouseSensitivity = Application.get().getConfiguration().getMouseSensitivity();
+    
+    private Matrix4f rotationMatrix = new Matrix4f().initIdentity();
+    private Matrix4f translationMatrix = new Matrix4f().initIdentity();
 
     public Camera() {
         this(new Vector3f(0), new Vector3f(0, 0, 1), new Vector3f(0, 1, 0));
@@ -56,10 +59,10 @@ public class Camera {
     }
 
     public Matrix4f getViewMatrix() {
-        Matrix4f cameraRotation = new Matrix4f().initCamera(forward, up);
-        Matrix4f cameraTranslation = new Matrix4f().initTranslation(-this.pos.x, -this.pos.y, -this.pos.z);
+        Matrix4f.initCamera(rotationMatrix, forward, up);
+        Matrix4f.initTranslation(translationMatrix, -this.pos.x, -this.pos.y, -this.pos.z);
 
-        return cameraRotation.multiply(cameraTranslation);
+        return rotationMatrix.multiply(translationMatrix);
     }
 
     public void move(Vector3f dir, float amount) {

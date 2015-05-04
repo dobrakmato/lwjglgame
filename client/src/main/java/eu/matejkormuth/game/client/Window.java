@@ -45,7 +45,7 @@ public class Window {
     private int height = Application.get().getConfiguration().getDisplayHeight();
     private boolean fullscreen = Application.get().getConfiguration().isFullscreen();
     private boolean resizable = false;
-    private boolean vsync = true;
+    private boolean vsync = false;
     private boolean shuttingDown = false;
 
     private Renderer renderer;

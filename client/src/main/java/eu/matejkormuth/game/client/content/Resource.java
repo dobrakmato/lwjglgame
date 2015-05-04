@@ -24,18 +24,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.core.scene.components.light;
+package eu.matejkormuth.game.client.content;
 
-import eu.matejkormuth.game.client.core.scene.NodeComponent;
+import eu.matejkormuth.game.shared.Disposable;
 
-public class CirclePosComponent extends NodeComponent {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    float time = (float) (Math.random() * Math.PI / 2);
+/**
+ * <p>
+ * Specifies that this object represents dynamically loaded resource. Can be
+ * applied on fields, getters and setters. <b>The type of annotated object
+ * should be Object to allow injection of resource object.</b> The first value
+ * should be String that contains path to resource, so the content loader can
+ * find the resource, load it and inject it to this field.
+ * </p>
+ * <p>
+ * Resource type specifies type of the field / value that during scene render
+ * (after load phase).
+ * </p>
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD, ElementType.METHOD })
+public @interface Resource {
+    /**
+     * Specifies type of this resource during render phase. The resource type
+     * must implements Disposable interface.
+     */
+    public Class<? extends Disposable> value();
 
-    @Override
-    public void update(float delta) {
-        time += 0.12f;
-        this.parent.position.x += (float) Math.sin(time) / 5;
-        this.parent.position.z += (float) Math.cos(time) / 5;
-    }
+    /**
+     * Specifies when should be this resource loaded. Default value is 0. That
+     * means this resource should be loaded on map loading stage 0.
+     */
+    public int loadPhase() default 0;
 }

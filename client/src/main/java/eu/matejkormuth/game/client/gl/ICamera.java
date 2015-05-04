@@ -35,4 +35,6 @@ public interface ICamera {
     public Matrix4f getProjectionMatrix();
 
     public Vector3f getPosition();
+
+    public Vector3f getRotation();
 }

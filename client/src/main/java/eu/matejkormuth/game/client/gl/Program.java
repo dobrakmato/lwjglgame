@@ -135,16 +135,22 @@ public class Program implements Disposable {
         setUniform(uniform, createMatrixBuffer(matrix));
     }
 
+    // Not sure how safe this is, but it does reduce memory usage and GC.
+    private static FloatBuffer sbuff;
+    
     private FloatBuffer createMatrixBuffer(Matrix4f matrix) {
-        FloatBuffer buff = BufferUtils.createFloatBuffer(4 * 4);
+        if(sbuff == null) {
+            sbuff = BufferUtils.createFloatBuffer(4 * 4);
+        }
+        sbuff.position(0);
 
-        buff.put(matrix.m[0]);
-        buff.put(matrix.m[1]);
-        buff.put(matrix.m[2]);
-        buff.put(matrix.m[3]);
+        sbuff.put(matrix.m[0]);
+        sbuff.put(matrix.m[1]);
+        sbuff.put(matrix.m[2]);
+        sbuff.put(matrix.m[3]);
 
-        buff.flip();
-        return buff;
+        sbuff.flip();
+        return sbuff;
     }
 
     public void setUniform(String uniform, FloatBuffer matrix4) {
@@ -173,6 +179,14 @@ public class Program implements Disposable {
 
         vertexShader = null;
         fragmentShader = null;
+    }
+    
+    public int getId() {
+        return this.program;
+    }
+    
+    public boolean isCurrent() {
+        return currentProgram == this.program;
     }
 
     public static void unbind() {

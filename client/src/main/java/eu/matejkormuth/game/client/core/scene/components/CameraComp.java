@@ -24,18 +24,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.core.scene.components.light;
+package eu.matejkormuth.game.client.core.scene.components;
 
 import eu.matejkormuth.game.client.core.scene.NodeComponent;
 
-public class CirclePosComponent extends NodeComponent {
+public class CameraComp extends NodeComponent {
 
-    float time = (float) (Math.random() * Math.PI / 2);
-
+    float time = 0;
+    
     @Override
     public void update(float delta) {
         time += 0.12f;
-        this.parent.position.x += (float) Math.sin(time) / 5;
-        this.parent.position.z += (float) Math.cos(time) / 5;
+        
     }
 }

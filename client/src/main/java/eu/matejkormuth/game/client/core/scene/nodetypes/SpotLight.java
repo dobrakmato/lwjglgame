@@ -30,13 +30,13 @@ import eu.matejkormuth.game.client.core.scene.Node;
 import eu.matejkormuth.game.client.core.scene.Property;
 import eu.matejkormuth.game.client.gl.IProgram;
 import eu.matejkormuth.game.client.gl.lighting.Attenuation;
-import eu.matejkormuth.game.client.gl.pipelines.forward.PForwardPoint;
+import eu.matejkormuth.game.client.gl.pipelines.forward.PForwardSpot;
 import eu.matejkormuth.game.shared.math.Color3f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
 public class SpotLight extends Node implements ForwardLightSource {
 
-    private static PForwardPoint forwardProgram = new PForwardPoint();
+    private static PForwardSpot forwardProgram = new PForwardSpot();
 
     public SpotLight() {
     }
@@ -45,7 +45,7 @@ public class SpotLight extends Node implements ForwardLightSource {
         this.attenuation = attenuation;
         this.color = color;
         this.intensity = intensity;
-        this.direction = direction;
+        this.rotation = direction;
         this.cutoff = cutoff;
     }
 
@@ -54,9 +54,7 @@ public class SpotLight extends Node implements ForwardLightSource {
     @Property
     public Color3f color = new Color3f(1, 1, 1);
     @Property
-    public float intensity = 0.75f;
-    @Property
-    public Vector3f direction = new Vector3f(1, 1, 1);
+    public float intensity = 1f;
     @Property
     public float cutoff = 0.7f;
 
@@ -67,11 +65,11 @@ public class SpotLight extends Node implements ForwardLightSource {
 
     @Override
     public void setLightUniforms() {
+        forwardProgram.setDirection(rotation);
+        forwardProgram.setCutoff(cutoff);
         forwardProgram.setColor(color);
         forwardProgram.setIntensity(intensity);
         // Beware! This setter uses color and intensity, so It has to be last.
         forwardProgram.setAttenuation(attenuation);
-        // program.setDirection(direction);
-        // program.setCutoff(cutoff);
     }
 }

@@ -82,6 +82,30 @@ public class Matrix4f {
 
         return this;
     }
+    
+    public static Matrix4f initScale(Matrix4f mat, float x, float y, float z) {
+        mat.m[0][0] = x;
+        mat.m[0][1] = 0;
+        mat.m[0][2] = 0;
+        mat.m[0][3] = 0;
+
+        mat.m[1][0] = 0;
+        mat.m[1][1] = y;
+        mat.m[1][2] = 0;
+        mat.m[1][3] = 0;
+
+        mat.m[2][0] = 0;
+        mat.m[2][1] = 0;
+        mat.m[2][2] = z;
+        mat.m[2][3] = 0;
+
+        mat.m[3][0] = 0;
+        mat.m[3][1] = 0;
+        mat.m[3][2] = 0;
+        mat.m[3][3] = 1;
+
+        return mat;
+    }
 
     public Matrix4f initTranslation(float x, float y, float z) {
         m[0][0] = 1;
@@ -106,6 +130,31 @@ public class Matrix4f {
 
         return this;
     }
+    
+    public static Matrix4f initTranslation(Matrix4f mat, float x, float y, float z) {
+        mat.m[0][0] = 1;
+        mat.m[0][1] = 0;
+        mat.m[0][2] = 0;
+        mat.m[0][3] = x;
+
+        mat.m[1][0] = 0;
+        mat.m[1][1] = 1;
+        mat.m[1][2] = 0;
+        mat.m[1][3] = y;
+
+        mat.m[2][0] = 0;
+        mat.m[2][1] = 0;
+        mat.m[2][2] = 1;
+        mat.m[2][3] = z;
+
+        mat.m[3][0] = 0;
+        mat.m[3][1] = 0;
+        mat.m[3][2] = 0;
+        mat.m[3][3] = 1;
+
+        return mat;
+    }
+
 
     public Matrix4f initRotation(float degreesX, float degreesY, float degreesZ) {
 
@@ -180,6 +229,80 @@ public class Matrix4f {
         m = rz.multiply(ry.multiply(rx)).m;
         return this;
     }
+    
+    public static Matrix4f initRotation(Matrix4f mat, float degreesX, float degreesY, float degreesZ) {
+
+        Matrix4f rx = new Matrix4f();
+        Matrix4f ry = new Matrix4f();
+        Matrix4f rz = new Matrix4f();
+
+        rz.m[0][0] = FastMath.cos(degreesZ);
+        rz.m[0][1] = -FastMath.sin(degreesZ);
+        rz.m[0][2] = 0;
+        rz.m[0][3] = 0;
+
+        rz.m[1][0] = FastMath.sin(degreesZ);
+        rz.m[1][1] = FastMath.cos(degreesZ);
+        rz.m[1][2] = 0;
+        rz.m[1][3] = 0;
+
+        rz.m[2][0] = 0;
+        rz.m[2][1] = 0;
+        rz.m[2][2] = 1;
+        rz.m[2][3] = 0;
+
+        rz.m[3][0] = 0;
+        rz.m[3][1] = 0;
+        rz.m[3][2] = 0;
+        rz.m[3][3] = 1;
+
+        // ----------------------
+
+        rx.m[0][0] = 1;
+        rx.m[0][1] = 0;
+        rx.m[0][2] = 0;
+        rx.m[0][3] = 0;
+
+        rx.m[1][0] = 0;
+        rx.m[1][1] = FastMath.cos(degreesX);
+        rx.m[1][2] = -FastMath.sin(degreesX);
+        rx.m[1][3] = 0;
+
+        rx.m[2][0] = 0;
+        rx.m[2][1] = FastMath.sin(degreesX);
+        rx.m[2][2] = FastMath.cos(degreesX);
+        rx.m[2][3] = 0;
+
+        rx.m[3][0] = 0;
+        rx.m[3][1] = 0;
+        rx.m[3][2] = 0;
+        rx.m[3][3] = 1;
+
+        // ---------------------
+
+        ry.m[0][0] = FastMath.cos(degreesY);
+        ry.m[0][1] = 0;
+        ry.m[0][2] = -FastMath.sin(degreesY);
+        ry.m[0][3] = 0;
+
+        ry.m[1][0] = 0;
+        ry.m[1][1] = 1;
+        ry.m[1][2] = 0;
+        ry.m[1][3] = 0;
+
+        ry.m[2][0] = FastMath.sin(degreesY);
+        ry.m[2][1] = 0;
+        ry.m[2][2] = FastMath.cos(degreesY);
+        ry.m[2][3] = 0;
+
+        ry.m[3][0] = 0;
+        ry.m[3][1] = 0;
+        ry.m[3][2] = 0;
+        ry.m[3][3] = 1;
+
+        mat.m = rz.multiply(ry.multiply(rx)).m;
+        return mat;
+    }
 
     public Matrix4f initPerspective(float fov, float width, float height, float zNear, float zFar) {
         float ar = width / height;
@@ -240,6 +363,39 @@ public class Matrix4f {
         m[3][3] = 1;
 
         return this;
+    }
+    
+    public static Matrix4f initCamera(Matrix4f mat, Vector3f forward, Vector3f up) {
+        Vector3f f = new Vector3f(forward);
+        f.normalize();
+        
+        Vector3f r = new Vector3f(up);
+        r.normalize();
+        r = r.cross(f);
+        
+        Vector3f u = f.cross(r);
+
+        mat.m[0][0] = r.x;
+        mat.m[0][1] = r.y;
+        mat.m[0][2] = r.z;
+        mat.m[0][3] = 0;
+
+        mat.m[1][0] = u.x;
+        mat.m[1][1] = u.y;
+        mat.m[1][2] = u.z;
+        mat.m[1][3] = 0;
+
+        mat.m[2][0] = f.x;
+        mat.m[2][1] = f.y;
+        mat.m[2][2] = f.z;
+        mat.m[2][3] = 0;
+
+        mat.m[3][0] = 0;
+        mat.m[3][1] = 0;
+        mat.m[3][2] = 0;
+        mat.m[3][3] = 1;
+
+        return mat;
     }
 
     public Matrix4f multiply(Matrix4f mat) {

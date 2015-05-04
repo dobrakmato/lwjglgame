@@ -50,6 +50,10 @@ public class Node implements Updatable {
     protected List<NodeComponent> components;
     protected Renderer renderer;
 
+    private Matrix4f positionMat = new Matrix4f().initIdentity();
+    private Matrix4f rotationMat = new Matrix4f().initIdentity();
+    private Matrix4f scaleMat = new Matrix4f().initIdentity();
+
     @Property
     public String name;
 
@@ -214,39 +218,40 @@ public class Node implements Updatable {
             lights.add((ForwardLightSource) this);
         }
 
-        for (Node child : this.children) {
-            child.gatherLights(lights);
+        for (int i = 0; i < this.children.size(); i++) {
+            this.children.get(i).gatherLights(lights);
         }
         return lights;
     }
 
     public void render(IProgram program) {
-        for (Node child : this.children) {
-            child.render(program);
+        for (int i = 0; i < this.children.size(); i++) {
+            this.children.get(i).render(program);
         }
 
-        for (NodeComponent component : this.components) {
-            component.render();
+        for (int i = 0; i < this.components.size(); i++) {
+            this.components.get(i).render();
         }
     }
 
     @Override
     public void update(float delta) {
-        for (Node child : this.children) {
-            child.update(delta);
+        for (int i = 0; i < this.children.size(); i++) {
+            this.children.get(i).update(delta);
         }
 
-        for (NodeComponent component : this.components) {
-            component.update(delta);
+        for (int i = 0; i < this.components.size(); i++) {
+            this.components.get(i).update(delta);
         }
     }
 
     public Matrix4f getTransformation() {
-        Matrix4f translation = new Matrix4f().initTranslation(this.position.x, this.position.y, this.position.z);
-        Matrix4f rotation = new Matrix4f().initRotation(this.rotation.x, this.rotation.y, this.rotation.z);
-        Matrix4f scale = new Matrix4f().initScale(this.scale.x, this.scale.y, this.scale.z);
+        // TODO: Cache matrices, update from setters.
+        Matrix4f.initTranslation(this.positionMat, this.position.x, this.position.y, this.position.z);
+        Matrix4f.initRotation(this.rotationMat, this.rotation.x, this.rotation.y, this.rotation.z);
+        Matrix4f.initScale(this.scaleMat, this.scale.x, this.scale.y, this.scale.z);
 
-        return translation.multiply(rotation.multiply(scale));
+        return positionMat.multiply(rotationMat.multiply(scaleMat));
     }
 
     @Override

@@ -26,6 +26,7 @@
  */
 package eu.matejkormuth.game.client.core.scene.nodetypes;
 
+import eu.matejkormuth.game.client.content.Resource;
 import eu.matejkormuth.game.client.core.scene.Node;
 import eu.matejkormuth.game.client.core.scene.Property;
 import eu.matejkormuth.game.client.gl.IProgram;
@@ -44,7 +45,9 @@ public class Model extends Node {
     
     @Property
     public Material material;
+    
     @Property
+    @Resource(Mesh.class)
     public Mesh mesh;
     
     @Override

@@ -41,4 +41,8 @@ public interface IProgram {
     public void use();
 
     public void setEyePos(Vector3f eyePos);
+
+    public int getId();
+
+    public boolean isCurrent();
 }
