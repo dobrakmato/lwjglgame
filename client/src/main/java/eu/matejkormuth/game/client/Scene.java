@@ -61,7 +61,7 @@ public class Scene {
     private Texture2D texture = Content.provideTexture2D("texture.png");
     private Texture2D normalMap = Content.provideTexture2D("texture_n.png");
     private Texture2D specularMap = Content.provideTexture2D("texture_s.png");
-    private Material material = new Material(texture, normalMap, specularMap, new Vector3f(1, 1, 1), 1, 32);
+    private Material material = new Material(texture, normalMap, specularMap, 1, 32);
     private Camera camera = new Camera();
 
     private DirectionalLight directionalLight = new DirectionalLight(new BaseLight(new Vector3f(0.7f, 0.7f, 0.5f),

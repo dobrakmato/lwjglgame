@@ -95,6 +95,8 @@ public class Window {
                 break;
             }
 
+            Display.setTitle(this.renderer.getCamera().getPosition().toString() + " | " + this.renderer.getCamera().getRotation().toString());
+            
             // Update.
             this.renderer.update();
             // Render.

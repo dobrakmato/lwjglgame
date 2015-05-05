@@ -50,6 +50,6 @@ public class BasicShader extends Program {
         } else {
             Texture2D.unbind();
         }
-        setUniform("color", material.getColor());
+        // setUniform("color", material.getColor());
     }
 }

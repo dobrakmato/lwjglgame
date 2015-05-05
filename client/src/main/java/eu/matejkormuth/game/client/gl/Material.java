@@ -26,22 +26,18 @@
  */
 package eu.matejkormuth.game.client.gl;
 
-import eu.matejkormuth.game.shared.math.Vector3f;
-
 public class Material {
     private Texture2D texture;
     private Texture2D normalMap;
     private Texture2D specularMap;
-    private Vector3f color;
     private float specularIntensity;
     private float specularPower;
 
-    public Material(Texture2D texture, Texture2D normalMap, Texture2D specularMap, Vector3f color, float specularIntensity,
+    public Material(Texture2D texture, Texture2D normalMap, Texture2D specularMap, float specularIntensity,
             float specularPower) {
         this.texture = texture;
         this.normalMap = normalMap;
         this.specularMap = specularMap;
-        this.color = color;
         this.specularIntensity = specularIntensity;
         this.specularPower = specularPower;
     }
@@ -68,14 +64,6 @@ public class Material {
 
     public void setSpecularMap(Texture2D specularMap) {
         this.specularMap = specularMap;
-    }
-
-    public Vector3f getColor() {
-        return color;
-    }
-
-    public void setColor(Vector3f color) {
-        this.color = color;
     }
 
     public float getSpecularPower() {

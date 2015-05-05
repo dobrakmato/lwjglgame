@@ -36,5 +36,6 @@ public class CameraComp extends NodeComponent {
     public void update(float delta) {
         time += 0.12f;
         
+        this.parent.rotation.y = (float) (Math.sin(time) - 1) / 2;
     }
 }

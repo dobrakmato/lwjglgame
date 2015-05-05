@@ -72,7 +72,7 @@ public class PhongShader extends Program implements IProgram {
         } else {
             Texture2D.unbind();
         }
-        setUniform("baseColor", material.getColor());
+        // setUniform("baseColor", material.getColor());
         setSpecularIntensity(material.getSpecularIntensity());
         setSpecularPower(material.getSpecularPower());
     }

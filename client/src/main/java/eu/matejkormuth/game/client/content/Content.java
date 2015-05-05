@@ -1,28 +1,28 @@
 /**
- * client - Multiplayer Java game engine.
- * Copyright (c) 2015, Matej Kormuth <http://www.github.com/dobrakmato>
- * All rights reserved.
+ * client - Multiplayer Java game engine. Copyright (c) 2015, Matej Kormuth
+ * <http://www.github.com/dobrakmato> All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 package eu.matejkormuth.game.client.content;
 
@@ -35,6 +35,7 @@ import eu.matejkormuth.game.client.gl.Mesh;
 import eu.matejkormuth.game.client.gl.Shader;
 import eu.matejkormuth.game.client.gl.ShaderType;
 import eu.matejkormuth.game.client.gl.Texture2D;
+import eu.matejkormuth.game.shared.Disposable;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -64,6 +65,23 @@ public class Content {
 
     public static void setRoot(Path path) {
         root = path;
+    }
+
+    public static Disposable provide(Class<? extends Disposable> value, String... more) {
+        if (value == Texture2D.class) {
+            return provideTexture2D(more);
+        } else if (value == Mesh.class) {
+            return provideMesh(more);
+        } else if (value == Shader.class) {
+            throw new RuntimeException("Can't provide shader using this method.");
+            // return provideShader(type, more);
+        } else if (value == Font.class) {
+            return provideFont(more);
+        }
+        // TODO: More content types.
+        else {
+            throw new UnsupportedOperationException("Can't provide resource for type: " + value.getName());
+        }
     }
 
     public static Shader provideShader(ShaderType type, String... more) {
@@ -111,7 +129,8 @@ public class Content {
     }
 
     public static Mesh importMesh(Path path) {
-        return objLoader.load(path);
+        // TODO: To .load() from .legacyLoad().
+        return objLoader.legacyLoad(path);
     }
 
     public static Font provideFont(String... more) {
@@ -128,6 +147,14 @@ public class Content {
 
     public static Font importFont(Path path) {
         return fontLoader.load(path);
+    }
+
+    public static Node provideScene(String... more) {
+        if (cache.has(more)) {
+            return (Node) cache.get(more);
+        } else {
+            return (Node) cache.load(more, importScene(more));
+        }
     }
 
     public static Node importScene(String... more) {

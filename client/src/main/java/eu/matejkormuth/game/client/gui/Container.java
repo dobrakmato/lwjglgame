@@ -26,6 +26,8 @@
  */
 package eu.matejkormuth.game.client.gui;
 
+import eu.matejkormuth.game.client.gl.Canvas2D;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,9 +52,9 @@ public class Container extends Component {
     }
 
     @Override
-    public void draw() {
+    public void draw(Canvas2D canvas) {
         for (Component c : childs) {
-            c.draw();
+            c.draw(canvas);
         }
     }
     

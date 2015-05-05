@@ -24,45 +24,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.gui;
+package eu.matejkormuth.game.client.content.objloading;
 
-import eu.matejkormuth.game.client.gl.Canvas2D;
-
-import java.awt.Color;
-
-public class Window extends Component {
-
-    private Color background;
-    private Container container;
-    
-    public Window(Component parent) {
-        // Top level component has no parent.
-        super(null);
-        this.container = new Container(this);
-        this.container.setPosition(0, 0);
-        this.background = Color.lightGray;
-    }
-
-    @Override
-    public void draw(Canvas2D canvas) {
-        drawBorder(canvas);
-        drawContainer(canvas);
-    }
-
-    private void drawBorder(Canvas2D canvas) {
-        // TODO Auto-generated method stub
-
-    }
-
-    private void drawContainer(Canvas2D canvas) {
-        this.container.draw(canvas);
-    }
-    
-    public Color getBackground() {
-        return background;
-    }
-    
-    public void setBackground(Color background) {
-        this.background = background;
-    }
+public class OBJIndex {
+    public int vertexIndex;
+    public int texCoordIndex;
+    public int normalIndex;
 }

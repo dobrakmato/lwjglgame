@@ -26,6 +26,55 @@
  */
 package eu.matejkormuth.game.client.content.objloading;
 
+import eu.matejkormuth.game.shared.math.Vector2f;
+import eu.matejkormuth.game.shared.math.Vector3f;
+
+import java.util.List;
+
 public class OBJModel {
+
+    private List<Vector3f> positions;
+    private List<Vector2f> texCoords;
+    private List<Vector3f> normals;
+    private List<OBJIndex> indices;
     
+    public OBJModel(List<Vector3f> positions, List<Vector2f> texCoords, List<Vector3f> normals, List<OBJIndex> indices) {
+        this.positions = positions;
+        this.texCoords = texCoords;
+        this.normals = normals;
+        this.indices = indices;
+    }
+
+    public List<Vector3f> getPositions() {
+        return positions;
+    }
+
+    public void setPositions(List<Vector3f> positions) {
+        this.positions = positions;
+    }
+
+    public List<Vector2f> getTexCoords() {
+        return texCoords;
+    }
+
+    public void setTexCoords(List<Vector2f> texCoords) {
+        this.texCoords = texCoords;
+    }
+
+    public List<Vector3f> getNormals() {
+        return normals;
+    }
+
+    public void setNormals(List<Vector3f> normals) {
+        this.normals = normals;
+    }
+
+    public List<OBJIndex> getIndices() {
+        return indices;
+    }
+
+    public void setIndices(List<OBJIndex> indices) {
+        this.indices = indices;
+    }
+
 }

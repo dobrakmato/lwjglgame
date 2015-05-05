@@ -65,6 +65,7 @@ public class SpotLight extends Node implements ForwardLightSource {
 
     @Override
     public void setLightUniforms() {
+        forwardProgram.setPosition(position);
         forwardProgram.setDirection(rotation);
         forwardProgram.setCutoff(cutoff);
         forwardProgram.setColor(color);

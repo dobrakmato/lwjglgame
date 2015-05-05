@@ -69,6 +69,11 @@ public class Program implements Disposable {
     }
 
     public void use() {
+        if(currentProgram == this.program) {
+            // Already a current program.
+            return;
+        }
+        
         currentProgram = this.program;
         glUseProgram(this.program);
     }

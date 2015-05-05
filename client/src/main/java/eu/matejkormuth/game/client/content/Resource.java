@@ -54,10 +54,4 @@ public @interface Resource {
      * must implements Disposable interface.
      */
     public Class<? extends Disposable> value();
-
-    /**
-     * Specifies when should be this resource loaded. Default value is 0. That
-     * means this resource should be loaded on map loading stage 0.
-     */
-    public int loadPhase() default 0;
 }

@@ -48,14 +48,14 @@ public class Model extends Node {
     
     @Property
     @Resource(Mesh.class)
-    public Mesh mesh;
+    public Object mesh;
     
     @Override
     public void render(IProgram program) {
         program.setModelMatrix(getTransformation());
         program.setMaterial(material);
         
-        mesh.draw();
+        ((Mesh) mesh).draw();
         
         super.render(program);
     }

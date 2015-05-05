@@ -1,37 +1,40 @@
 /**
- * client - Multiplayer Java game engine.
- * Copyright (c) 2015, Matej Kormuth <http://www.github.com/dobrakmato>
- * All rights reserved.
+ * client - Multiplayer Java game engine. Copyright (c) 2015, Matej Kormuth
+ * <http://www.github.com/dobrakmato> All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 package eu.matejkormuth.game.client.core.scene;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.matejkormuth.game.client.content.Resource;
+import eu.matejkormuth.game.client.content.ResourceInjectLocation;
 import eu.matejkormuth.game.client.core.scene.nodetypes.ForwardLightSource;
 import eu.matejkormuth.game.client.gl.IProgram;
 import eu.matejkormuth.game.client.gl.Renderer;
+import eu.matejkormuth.game.shared.Disposable;
 import eu.matejkormuth.game.shared.Updatable;
 import eu.matejkormuth.game.shared.math.Matrix4f;
 import eu.matejkormuth.game.shared.math.Vector3f;
@@ -40,7 +43,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node implements Updatable {
+public class Node implements Updatable, Disposable {
 
     private static final Logger log = LoggerFactory.getLogger(Node.class);
 
@@ -71,7 +74,7 @@ public class Node implements Updatable {
         }
         this.isRootNode = rootNode;
         checkName();
-        initialize();
+        onInitialize();
     }
 
     private void checkName() {
@@ -104,7 +107,7 @@ public class Node implements Updatable {
         }
     }
 
-    private void initialize() {
+    private void onInitialize() {
     }
 
     @Property
@@ -224,6 +227,20 @@ public class Node implements Updatable {
         return lights;
     }
 
+    protected List<ResourceInjectLocation> gatherResourceInjectLocations(List<ResourceInjectLocation> resourcers) {
+        if (resourcers == null) {
+            resourcers = new ArrayList<>(20);
+        }
+
+        for (Field f : this.getClass().getFields()) {
+            if (f.isAnnotationPresent(Resource.class)) {
+                resourcers.add(new ResourceInjectLocation(f, this));
+            }
+        }
+
+        return resourcers;
+    }
+
     public void render(IProgram program) {
         for (int i = 0; i < this.children.size(); i++) {
             this.children.get(i).render(program);
@@ -252,6 +269,27 @@ public class Node implements Updatable {
         Matrix4f.initScale(this.scaleMat, this.scale.x, this.scale.y, this.scale.z);
 
         return positionMat.multiply(rotationMat.multiply(scaleMat));
+    }
+
+    @Override
+    public void dispose() {
+        this.onDestroy();
+    }
+
+    private void onDestroy() {
+        for (int i = 0; i < this.children.size(); i++) {
+            this.children.get(i).onDestroy();
+        }
+
+        this.components.clear();
+        this.children = null;
+        this.components = null;
+
+        this.renderer = null;
+        this.parent = null;
+        this.scaleMat = null;
+        this.positionMat = null;
+        this.rotationMat = null;
     }
 
     @Override

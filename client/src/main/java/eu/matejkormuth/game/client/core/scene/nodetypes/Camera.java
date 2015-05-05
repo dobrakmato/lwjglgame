@@ -69,6 +69,11 @@ public class Camera extends Node implements ICamera {
     }
 
     @Override
+    public Vector3f getRotation() {
+        return this.internal.getForward();
+    }
+    
+    @Override
     public Vector3f getPosition() {
         return internal.getPos();
     }

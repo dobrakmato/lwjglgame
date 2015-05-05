@@ -26,6 +26,8 @@
  */
 package eu.matejkormuth.game.client.gui;
 
+import eu.matejkormuth.game.client.gl.Canvas2D;
+
 public abstract class Component {
     private int x;
     private int y;
@@ -78,5 +80,5 @@ public abstract class Component {
         this.y = y;
     }
 
-    public abstract void draw();
+    public abstract void draw(Canvas2D renderer);
 }

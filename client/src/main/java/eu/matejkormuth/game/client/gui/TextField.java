@@ -26,6 +26,8 @@
  */
 package eu.matejkormuth.game.client.gui;
 
+import eu.matejkormuth.game.client.gl.Canvas2D;
+
 import java.awt.Color;
 
 public class TextField extends Component {
@@ -41,7 +43,7 @@ public class TextField extends Component {
     }
 
     @Override
-    public void draw() {
+    public void draw(Canvas2D canvas) {
         // TODO Auto-generated method stub
 
     }
