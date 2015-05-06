@@ -24,17 +24,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.gui.animations;
+package eu.matejkormuth.game.client.core.scene.nodetypes;
 
-import java.util.Map;
+import eu.matejkormuth.game.client.content.Resource;
+import eu.matejkormuth.game.client.core.scene.Node;
+import eu.matejkormuth.game.client.core.scene.Property;
+import eu.matejkormuth.game.client.gl.IProgram;
+import eu.matejkormuth.game.client.gl.TextureCubeMap;
+import eu.matejkormuth.game.client.gl.pipelines.SkyboxProgram;
 
-public abstract class Animation {
-    private Map<String, AnimatedProperty> animations;
+public class Skybox extends Node {
 
-    public void animate(float time, Animatable target) {
-        // Interpolate on animation ranges.
-        for (AnimatedProperty prop : animations.values()) {
-            target.setProperty(prop.getName(), prop.getStart() + prop.getDiff() * time);
-        }
+    private static final SkyboxProgram program = new SkyboxProgram();
+    
+    @Property
+    @Resource(TextureCubeMap.class)
+    public Object cubeMap;
+
+    @Override
+    public void render(IProgram currentProgram) {
+        // Skybox is rendered using it's own program.
+        program.use();
+        
+        
+        // Use the previous program for next nodes.
+        currentProgram.use();
     }
 }

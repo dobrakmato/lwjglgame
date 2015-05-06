@@ -26,6 +26,7 @@
  */
 package eu.matejkormuth.game.client.content.loaders;
 
+import eu.matejkormuth.game.client.content.Content;
 import eu.matejkormuth.game.client.content.ContentLoader;
 import eu.matejkormuth.game.client.content.objloading.OBJIndex;
 import eu.matejkormuth.game.client.gl.FloatVertex;
@@ -139,7 +140,8 @@ public class OBJLoader extends ContentLoader<Mesh> {
                 }
             }
 
-            return new Mesh(vertices.toArray(new FloatVertex[vertices.size()]), indices.toArray(), true);
+            return new Mesh(path.relativize(Content.getRoot()).toString(), vertices.toArray(new FloatVertex[vertices
+                    .size()]), indices.toArray(), true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

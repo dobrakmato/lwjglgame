@@ -32,9 +32,14 @@ import eu.matejkormuth.game.shared.math.Vector3f;
 
 public class FloatVertex {
 
-    // Size of this vertex is 8 floating point numbers.
-    public static final int SIZE = 8;
+    // Size of this vertex is 11 floating point numbers.
+    public static final int SIZE = 11;
     public static final int BYTES = 4; // Float has 4 bytes.
+    
+    // 3 floats - POS
+    // 2 floats - TEXCOORDS
+    // 3 floats - NORMAL
+    // 3 floats - TANGENT
 
     private float[] data = new float[SIZE];
 
@@ -69,6 +74,12 @@ public class FloatVertex {
         this.data[6] = normal.y;
         this.data[7] = normal.z;
     }
+    
+    public void setTangent(Vector3f tangent) {
+        this.data[8] = tangent.x;
+        this.data[9] = tangent.y;
+        this.data[10] = tangent.z;
+    }
 
     public float[] getData() {
         return data;
@@ -82,5 +93,7 @@ public class FloatVertex {
         return new Vector3f(this.data[5], this.data[6], this.data[7]);
     }
 
-    
+    public Vector3f getTangent() {
+        return new Vector3f(this.data[8], this.data[9], this.data[10]);
+    }
 }

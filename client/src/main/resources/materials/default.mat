@@ -1,0 +1,5 @@
+diffuse = texture.png
+normalMap = texture_n.png
+specularMap = texture_s.png
+specularPower = 8
+specularIntensity = 2

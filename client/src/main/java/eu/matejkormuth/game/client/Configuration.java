@@ -50,6 +50,8 @@ public class Configuration {
     private float musicVolume = 0.75f;
     private float soundVolume = 1f;
     private float mouseSensitivity = 0.1f;
+    private int maxAF = 8;
+    private boolean mipmaps = true;
 
     public Configuration() {
 
@@ -122,6 +124,22 @@ public class Configuration {
 
     public void setMouseSensitivity(float mouseSensitivity) {
         this.mouseSensitivity = mouseSensitivity;
+    }
+
+    public int getMaxAF() {
+        return maxAF;
+    }
+
+    public void setMaxAF(int maxAF) {
+        this.maxAF = maxAF;
+    }
+
+    public boolean isMipmaps() {
+        return mipmaps;
+    }
+
+    public void setMipmaps(boolean mipmaps) {
+        this.mipmaps = mipmaps;
     }
 
 }

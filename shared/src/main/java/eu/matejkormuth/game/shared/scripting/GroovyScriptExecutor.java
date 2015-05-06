@@ -54,8 +54,8 @@ public class GroovyScriptExecutor {
     private GroovyClassLoader gcl;
     private GroovyShell shell;
 
-    public GroovyScriptExecutor() {
-        gcl = new GroovyClassLoader();
+    public GroovyScriptExecutor(ClassLoader loader) {
+        gcl = new GroovyClassLoader(loader);
         shell = new GroovyShell(gcl);
         loadedScripts = new HashMap<>();
 
@@ -95,7 +95,8 @@ public class GroovyScriptExecutor {
         }
     }
 
-    private void compileAndLoadClass(Path path, String scriptText) {
+    @SuppressWarnings("rawtypes")
+    private Class compileAndLoadClass(Path path, String fileContents) {
         File srcFile = path.toFile();
         File compiledFile = new File(srcFile.getAbsolutePath().replace(".groovy", ".gcs"));
         String className = srcFile.getName().substring(0, srcFile.getName().indexOf("."));
@@ -103,7 +104,7 @@ public class GroovyScriptExecutor {
         if (!compiledFile.exists()) {
             // Compile class.
             CompilationUnit compileUnit = new CompilationUnit();
-            compileUnit.addSource(className, scriptText);
+            compileUnit.addSource(className, fileContents);
             compileUnit.compile(Phases.CLASS_GENERATION);
 
             for (Object compileClass : compileUnit.getClasses()) {
@@ -120,15 +121,15 @@ public class GroovyScriptExecutor {
 
         }
         // Load compiled file.
-        if(classBytes == null) {
+        if (classBytes == null) {
             try {
                 classBytes = Files.readAllBytes(compiledFile.toPath());
             } catch (IOException e) {
                 log.error("Can't load compiled class file!", e);
             }
         }
-        
-        gcl.defineClass(className, classBytes);
+
+        return gcl.defineClass(className, classBytes);
     }
 
     private boolean loadScript(Path path) {
@@ -159,5 +160,27 @@ public class GroovyScriptExecutor {
 
     private boolean isAClassDefinition(String script) {
         return script.contains("class ");
+    }
+
+    private static String imports = "import eu.matejkormuth.game.client.core.scene.*\n"
+            + "import eu.matejkormuth.game.client.core.scene.components.*\n"
+            + "import eu.matejkormuth.game.client.core.scene.nodetypes.*\n"
+            + "import eu.matejkormuth.game.client.gl.lighting.*\n" + "import eu.matejkormuth.game.shared.math.*\n";
+
+    @SuppressWarnings("rawtypes")
+    public Object loadScene(Path path) {
+        String content;
+        try {
+            content = new String(Files.readAllBytes(path));
+
+            if (!content.contains("import ")) {
+                content = imports + content;
+            }
+
+            Class c = compileAndLoadClass(path, content);
+            return c.newInstance();
+        } catch (IOException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

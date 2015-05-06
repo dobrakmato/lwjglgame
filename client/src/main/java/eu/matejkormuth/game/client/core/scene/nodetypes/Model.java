@@ -44,7 +44,8 @@ public class Model extends Node {
     }
     
     @Property
-    public Material material;
+    @Resource(Material.class)
+    public Object material;
     
     @Property
     @Resource(Mesh.class)
@@ -53,7 +54,7 @@ public class Model extends Node {
     @Override
     public void render(IProgram program) {
         program.setModelMatrix(getTransformation());
-        program.setMaterial(material);
+        program.setMaterial((Material) material);
         
         ((Mesh) mesh).draw();
         

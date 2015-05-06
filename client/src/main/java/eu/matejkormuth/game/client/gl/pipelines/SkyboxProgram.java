@@ -24,17 +24,51 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.gui.animations;
+package eu.matejkormuth.game.client.gl.pipelines;
 
-import java.util.Map;
+import eu.matejkormuth.game.client.content.Content;
+import eu.matejkormuth.game.client.gl.IProgram;
+import eu.matejkormuth.game.client.gl.Material;
+import eu.matejkormuth.game.client.gl.Program;
+import eu.matejkormuth.game.client.gl.ShaderType;
+import eu.matejkormuth.game.shared.math.Matrix4f;
+import eu.matejkormuth.game.shared.math.Vector3f;
 
-public abstract class Animation {
-    private Map<String, AnimatedProperty> animations;
+public class SkyboxProgram extends Program implements IProgram {
 
-    public void animate(float time, Animatable target) {
-        // Interpolate on animation ranges.
-        for (AnimatedProperty prop : animations.values()) {
-            target.setProperty(prop.getName(), prop.getStart() + prop.getDiff() * time);
-        }
+    public SkyboxProgram() {
+        super(Content.provideShader(ShaderType.VERTEX, "skybox.vs"), Content.provideShader(ShaderType.FRAGMENT,
+                "skybox.fs"));
     }
+
+    @Override
+    public void setViewMatrix(Matrix4f matrix) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setProjectionMatrix(Matrix4f matrix) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setModelMatrix(Matrix4f matrix) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setMaterial(Material material) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setEyePos(Vector3f eyePos) {
+        // TODO Auto-generated method stub
+
+    }
+
 }

@@ -46,14 +46,14 @@ public class Application {
 
     public static void main(String[] args) {
         // TODO: Parse args.
-        
+
         new Application().start();
     }
 
     public static Application get() {
         return app;
     }
-    
+
     private AudioDevice audioDevice;
     private GroovyScriptExecutor scriptExecutor;
     private StdInConsole console;
@@ -66,7 +66,7 @@ public class Application {
 
     public void start() {
         log.info("Client started at {}", new SimpleDateFormat().format(new Date()));
-        
+
         // Load configuration.
         this.conf = Configuration.load();
 
@@ -77,9 +77,9 @@ public class Application {
         Content.setRoot(new File(".").getAbsoluteFile().toPath());
 
         // Initialize Groovy script executor.
-        this.scriptExecutor = new GroovyScriptExecutor();
+        this.scriptExecutor = new GroovyScriptExecutor(this.getClass().getClassLoader());
         this.scriptExecutor.execute(Content.getPath("scripts", "main.groovy"));
-        
+
         // Start console reader.
         this.console = new StdInConsole();
         this.console.getDispatcher().register(new ShutdownCommand());
@@ -87,7 +87,7 @@ public class Application {
 
         // Create audio device.
         this.audioDevice = new AudioDevice();
-        
+
         // Create window and start rendering.
         this.window = new Window();
         this.window.doUpdate();
@@ -96,7 +96,8 @@ public class Application {
     public void shutdown() {
         this.console.shutdown();
         this.window.shutdown();
-        
+        this.audioDevice.dispose();
+
         log.info("Saving configuration...");
         conf.save();
     }
@@ -108,11 +109,11 @@ public class Application {
     public Window getWindow() {
         return window;
     }
-    
+
     public Configuration getConfiguration() {
         return conf;
     }
-    
+
     public GroovyScriptExecutor getScriptExecutor() {
         return scriptExecutor;
     }

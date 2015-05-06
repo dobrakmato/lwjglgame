@@ -65,9 +65,9 @@ public class CtrStringGenerator {
             Attenuation a = (Attenuation) obj;
             return "new Attenuation(" + a.getConstant() + ", " + a.getLinear() + ", " + a.getQuadratic() + ")";
         } else if (c == Material.class) {
-            return "\"$MATERIAL_RESOURCE_NOT_FOUND\"";
+            return "\"" + ((Material) obj).getKey() + "\"";
         } else if (c == Mesh.class) {
-            return "\"$MESH_RESOURCE_NOT_FOUND\"";
+            return "\"" + ((Mesh) obj).getKey() + "\"";
         } else {
             throw new RuntimeException("Can't provide initialization code for type " + c.getName());
         }

@@ -56,16 +56,16 @@ public class Scene {
 
     };
     private int[] indices = new int[] { 0, 1, 2, 2, 3, 0 };
-    private Mesh triangle = new Mesh(vertices, indices, true);
+    private Mesh triangle = new Mesh("legacy", vertices, indices, true);
 
     private Texture2D texture = Content.provideTexture2D("texture.png");
     private Texture2D normalMap = Content.provideTexture2D("texture_n.png");
     private Texture2D specularMap = Content.provideTexture2D("texture_s.png");
-    private Material material = new Material(texture, normalMap, specularMap, 1, 32);
+    private Material material = new Material("oldgen", texture, normalMap, specularMap, 1, 32);
     private Camera camera = new Camera();
 
-    private DirectionalLight directionalLight = new DirectionalLight(new BaseLight(new Vector3f(0.7f, 0.7f, 0.5f),
-            0.1f), new Vector3f(1, 1, 1).normalize());
+    private DirectionalLight directionalLight = new DirectionalLight(
+            new BaseLight(new Vector3f(0.7f, 0.7f, 0.5f), 0.1f), new Vector3f(1, 1, 1).normalize());
     private PointLight pointLight1 = new PointLight(new BaseLight(new Vector3f(1, .25f, 0), 0.1f), new Attenuation(0,
             0, 1), new Vector3f(0, .8f, 0));
     private PointLight pointLight2 = new PointLight(new BaseLight(new Vector3f(0, .25f, 1), 0.1f), new Attenuation(0,
@@ -74,7 +74,7 @@ public class Scene {
             .001f, .01f), new Vector3f(0, 5f, 20));
     private SpotLight flashLight = new SpotLight(new PointLight(new BaseLight(new Vector3f(0, 1f, 1), 1f),
             new Attenuation(1, 0.7f, 0.004f), new Vector3f(0, .8f, 6)), new Vector3f(1), 0.45f);
-    
+
     private float time;
 
     public void init() {
@@ -121,7 +121,7 @@ public class Scene {
 
         flashLight.getPointLight().setPosition(camera.getPos());
         flashLight.setDirection(camera.getForward());
-        
+
         phong.setPointLight(0, pointLight1);
         phong.setPointLight(1, pointLight2);
         phong.setPointLight(2, pointLight3);
@@ -129,17 +129,17 @@ public class Scene {
 
         phong.setEyePosition(camera.getPos());
         phong.setAmbientLight(new Vector3f(0.025f));
-        //phong.setDirectionalLight(directionalLight);
-        //phong.setModel(transform);
-        //phong.setView(view);
-        //phong.setProjection(projection);
+        // phong.setDirectionalLight(directionalLight);
+        // phong.setModel(transform);
+        // phong.setView(view);
+        // phong.setProjection(projection);
         phong.setMaterial(material);
         texture.bind(0);
         normalMap.bind(1);
         specularMap.bind(2);
         triangle.draw();
-        
-        //phong.setModel(transform);
+
+        // phong.setModel(transform);
     }
 
     public void update() {

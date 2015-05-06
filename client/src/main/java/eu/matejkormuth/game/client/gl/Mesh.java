@@ -44,8 +44,10 @@ public class Mesh implements Disposable {
     private int vbo;
     private int vao;
     private int ibo;
+    private final String key;
 
-    public Mesh(FloatVertex[] vertices, int[] indices, boolean calcNormals) {
+    public Mesh(String key, FloatVertex[] vertices, int[] indices, boolean calcNormals) {
+        this.key = key;
         this.indices = indices.length;
         
         if(calcNormals) {
@@ -103,6 +105,9 @@ public class Mesh implements Disposable {
         // Normal - location 2
         glEnableVertexAttribArray(2);
         glVertexAttribPointer(2, 3, GL_FLOAT, false, Float.BYTES * FloatVertex.SIZE, Float.BYTES * 5);
+        // Tangent - location 3
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, false, Float.BYTES * FloatVertex.SIZE, Float.BYTES * 8);
     }
 
     public void bind() {
@@ -136,6 +141,10 @@ public class Mesh implements Disposable {
         }
     }
 
+    public String getKey() {
+        return key;
+    }
+    
     @Override
     public void dispose() {
         glDeleteBuffers(vbo);

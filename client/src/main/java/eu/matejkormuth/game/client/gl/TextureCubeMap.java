@@ -27,62 +27,55 @@
 package eu.matejkormuth.game.client.gl;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.*;
 import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL30.*;
-import eu.matejkormuth.game.client.Application;
 import eu.matejkormuth.game.shared.Disposable;
 
 import java.nio.ByteBuffer;
 
-public class Texture2D implements Disposable {
-    private int width;
-    private int height;
-    private int textureId;
+public class TextureCubeMap implements Disposable {
 
-    public Texture2D(int width, int height, ByteBuffer texData) {
-        this.width = width;
-        this.height = height;
-        initialize(texData);
-    }
+    private static final int[] types = new int[] { GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+            GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+            GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
+    private int texture;
 
-    private void initialize(ByteBuffer buffer) {
-        // Create Texture2D.
-        this.textureId = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, this.textureId);
+    /**
+     * <p>
+     * Datas order:
+     * </p>
+     * <ul>
+     * <li>GL_TEXTURE_CUBE_MAP_POSITIVE_X</li>
+     * <li>GL_TEXTURE_CUBE_MAP_NEGATIVE_X</li>
+     * <li>GL_TEXTURE_CUBE_MAP_POSITIVE_Y</li>
+     * <li>GL_TEXTURE_CUBE_MAP_NEGATIVE_Y</li>
+     * <li>GL_TEXTURE_CUBE_MAP_POSITIVE_Z</li>
+     * <li>GL_TEXTURE_CUBE_MAP_NEGATIVE_Z</li>
+     * </ul>
+     */
+    public TextureCubeMap(int width, int height, ByteBuffer[] datas) {
+        texture = glGenTextures();
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-
-        if (Application.get().getConfiguration().isMipmaps()) {
-            glGenerateMipmap(GL_TEXTURE_2D);
+        for (int i = 0; i < types.length; i++) {
+            glTexImage2D(types[i], 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, datas[i]);
         }
-        glTexParameteri(GL_TEXTURE_2D, org.lwjgl.opengl.EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT,
-                Application.get().getConfiguration().getMaxAF());
+
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     }
 
     public void bind(int samplerSlot) {
         glActiveTexture(GL_TEXTURE0 + samplerSlot);
-        glBindTexture(GL_TEXTURE_2D, this.textureId);
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
     }
 
     @Override
     public void dispose() {
-        glDeleteTextures(this.textureId);
+        glDeleteTextures(texture);
     }
 
-    public static void unbind() {
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
 }

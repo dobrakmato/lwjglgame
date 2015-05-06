@@ -31,10 +31,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class Material implements ToDataStreamSerializable {
-    private byte colorR;
-    private byte colorG;
-    private byte colorB;
-
     private String diffuseMap;
     private String normalMap;
     private String specularMap;
@@ -44,28 +40,21 @@ public class Material implements ToDataStreamSerializable {
 
     @Override
     public void serialize(DataOutputStream out) throws IOException {
-        out.writeByte(colorR);
-        out.writeByte(colorG);
-        out.writeByte(colorB);
-        
+
         out.writeUTF(diffuseMap);
         out.writeUTF(normalMap);
         out.writeUTF(specularMap);
-        
+
         out.writeFloat(specularIntensity);
         out.writeFloat(specularPower);
     }
 
     @Override
     public void deserialize(DataInputStream in) throws IOException {
-        colorR = in.readByte();
-        colorG = in.readByte();
-        colorB = in.readByte();
-        
         diffuseMap = in.readUTF();
         normalMap = in.readUTF();
         specularMap = in.readUTF();
-        
+
         specularIntensity = in.readFloat();
         specularPower = in.readFloat();
     }

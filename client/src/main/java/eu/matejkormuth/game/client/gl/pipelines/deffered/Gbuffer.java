@@ -74,4 +74,12 @@ public class Gbuffer {
         // Restore default framebuffer.
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     }
+    
+    public void bindReading() {
+        
+    }
+    
+    public void bindWriting() {
+        
+    }
 }

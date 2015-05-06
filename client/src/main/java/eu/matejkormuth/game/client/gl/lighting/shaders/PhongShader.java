@@ -67,8 +67,8 @@ public class PhongShader extends Program implements IProgram {
 
     @Override
     public void setMaterial(Material material) {
-        if (material.getTexture() != null) {
-            material.getTexture().bind(0);
+        if (material.getDiffuse() != null) {
+            material.getDiffuse().bind(0);
         } else {
             Texture2D.unbind();
         }

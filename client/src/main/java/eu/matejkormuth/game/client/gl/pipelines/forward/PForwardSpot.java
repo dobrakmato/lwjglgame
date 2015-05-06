@@ -107,6 +107,6 @@ public class PForwardSpot extends Program implements IProgram {
     public void setMaterial(Material material) {
         this.setUniformf("specularIntensity", material.getSpecularIntensity());
         this.setUniformf("specularPower", material.getSpecularPower());
-        material.getTexture().bind(0);
+        material.getDiffuse().bind(0);
     }
 }

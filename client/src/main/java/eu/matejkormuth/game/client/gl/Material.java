@@ -26,28 +26,32 @@
  */
 package eu.matejkormuth.game.client.gl;
 
-public class Material {
-    private Texture2D texture;
+import eu.matejkormuth.game.shared.Disposable;
+
+public class Material implements Disposable {
+    private Texture2D diffuse;
     private Texture2D normalMap;
     private Texture2D specularMap;
     private float specularIntensity;
     private float specularPower;
+    private String key;
 
-    public Material(Texture2D texture, Texture2D normalMap, Texture2D specularMap, float specularIntensity,
+    public Material(String key, Texture2D diffuse, Texture2D normalMap, Texture2D specularMap, float specularIntensity,
             float specularPower) {
-        this.texture = texture;
+        this.key = key;
+        this.diffuse = diffuse;
         this.normalMap = normalMap;
         this.specularMap = specularMap;
         this.specularIntensity = specularIntensity;
         this.specularPower = specularPower;
     }
 
-    public Texture2D getTexture() {
-        return texture;
+    public Texture2D getDiffuse() {
+        return diffuse;
     }
 
-    public void setTexture(Texture2D texture) {
-        this.texture = texture;
+    public void setDiffuse(Texture2D diffuse) {
+        this.diffuse = diffuse;
     }
 
     public Texture2D getNormalMap() {
@@ -80,6 +84,18 @@ public class Material {
 
     public void setSpecularIntensity(float specularIntensity) {
         this.specularIntensity = specularIntensity;
+    }
+
+    @Override
+    public void dispose() {
+        diffuse.dispose();
+        specularMap.dispose();
+        normalMap.dispose();
+        
+    }
+
+    public String getKey() {
+        return this.key;
     }
 
 }

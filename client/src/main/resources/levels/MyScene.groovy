@@ -2,14 +2,15 @@
 // Content-Type: Scene
 
 import eu.matejkormuth.game.client.core.scene.*
-import eu.matejkormuth.game.client.core.scene.lights.*
+import eu.matejkormuth.game.client.core.scene.components.*
+import eu.matejkormuth.game.client.core.scene.nodetypes.*
 import eu.matejkormuth.game.client.gl.lighting.*
 import eu.matejkormuth.game.shared.math.*
 
 class MyScene extends Node {
     Model model0 = new Model(
-        material: "$MATERIAL_RESOURCE", 
-        mesh: "$MESH_RESOURCE", 
+        material: "default.mat", 
+        mesh: "plane.obj", 
         name: "model0", 
         position: new Vector3f(0.0, 0.0, 0.0), 
         rotation: new Vector3f(0.0, 0.0, 0.0), 
@@ -17,10 +18,10 @@ class MyScene extends Node {
         children: []
     );
     Model model1 = new Model(
-        material: "$MATERIAL_RESOURCE", 
-        mesh: "$MESH_RESOURCE", 
+        material: "default.mat", 
+        mesh: "box.obj", 
         name: "model1", 
-        position: new Vector3f(0.0, 1.0, 20.0), 
+        position: new Vector3f(0.0, 1.0, 0.0), 
         rotation: new Vector3f(0.0, 0.0, 0.0), 
         scale: new Vector3f(1.0, 1.0, 1.0), 
         children: []
@@ -67,13 +68,12 @@ class MyScene extends Node {
     );
     SpotLight spotLight0 = new SpotLight(
         attenuation: new Attenuation(1.0, 0.4, 0.04), 
-        color: new Vector3f(0.0, 0.8, 6.0), 
+        color: new Color3f(0.0, 0.8, 6.0), 
         intensity: 1.0f, 
-        direction: new Vector3f(0.5, 0.5, 0.5), 
         cutoff: 0.7f, 
         name: "spotLight0", 
         position: new Vector3f(0.0, 0.0, 0.0), 
-        rotation: new Vector3f(0.0, 0.0, 0.0), 
+        rotation: new Vector3f(0.5, 0.5, 0.5), 
         scale: new Vector3f(1.0, 1.0, 1.0), 
         children: []
     );

@@ -1,41 +1,48 @@
 /**
- * client - Multiplayer Java game engine. Copyright (c) 2015, Matej Kormuth
- * <http://www.github.com/dobrakmato> All rights reserved.
+ * client - Multiplayer Java game engine.
+ * Copyright (c) 2015, Matej Kormuth <http://www.github.com/dobrakmato>
+ * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
  *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
+ * this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package eu.matejkormuth.game.client.content;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import eu.matejkormuth.game.client.Application;
 import eu.matejkormuth.game.client.content.loaders.AWTImageLoader;
 import eu.matejkormuth.game.client.content.loaders.DefaultFontLoader;
 import eu.matejkormuth.game.client.content.loaders.OBJLoader;
+import eu.matejkormuth.game.client.content.loaders.PlainTextMaterialLoader;
 import eu.matejkormuth.game.client.core.scene.Node;
 import eu.matejkormuth.game.client.gl.Font;
+import eu.matejkormuth.game.client.gl.Material;
 import eu.matejkormuth.game.client.gl.Mesh;
 import eu.matejkormuth.game.client.gl.Shader;
 import eu.matejkormuth.game.client.gl.ShaderType;
 import eu.matejkormuth.game.client.gl.Texture2D;
 import eu.matejkormuth.game.shared.Disposable;
+import eu.matejkormuth.game.shared.scripting.GroovyScriptExecutor;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -45,6 +52,7 @@ import java.nio.file.Paths;
 
 public class Content {
 
+    private static final Logger log = LoggerFactory.getLogger(Content.class);
     public static final Charset UTF_8 = Charset.forName("UTF-8");
 
     public static final String DIR_TEXTURES = "textures";
@@ -55,6 +63,7 @@ public class Content {
     public static final String DIR_LEVELS = "levels";
     public static final String DIR_GUI = "gui";
     public static final String DIR_FONTS = "fonts";
+    private static final String DIR_MATERIALS = "materials";
 
     private static Path root;
     private static ContentCache cache = new ContentCache();
@@ -62,6 +71,7 @@ public class Content {
     private static AWTImageLoader awtLoader = new AWTImageLoader();
     private static OBJLoader objLoader = new OBJLoader();
     private static DefaultFontLoader fontLoader = new DefaultFontLoader();
+    private static PlainTextMaterialLoader materialLoader = new PlainTextMaterialLoader();
 
     public static void setRoot(Path path) {
         root = path;
@@ -72,7 +82,10 @@ public class Content {
             return provideTexture2D(more);
         } else if (value == Mesh.class) {
             return provideMesh(more);
-        } else if (value == Shader.class) {
+        } else if (value == Material.class) {
+            return provideMaterial(more);
+        } 
+        else if (value == Shader.class) {
             throw new RuntimeException("Can't provide shader using this method.");
             // return provideShader(type, more);
         } else if (value == Font.class) {
@@ -82,6 +95,23 @@ public class Content {
         else {
             throw new UnsupportedOperationException("Can't provide resource for type: " + value.getName());
         }
+    }
+
+    public static Material provideMaterial(String... more) {
+        if (cache.has(more)) {
+            return (Material) cache.get(more);
+        } else {
+            return (Material) cache.load(more, importMaterial(more));
+        }
+    }
+
+    public static Material importMaterial(String[] more) {
+        return importMaterial(getPath(DIR_MATERIALS, more));
+    }
+
+    public static Material importMaterial(Path path) {
+        log.debug("Loading material {}...", path);
+        return materialLoader.load(path);
     }
 
     public static Shader provideShader(ShaderType type, String... more) {
@@ -97,6 +127,7 @@ public class Content {
     }
 
     public static Shader importShader(ShaderType type, Path path) {
+        log.debug("Loading shader {}...", path);
         return new Shader(type, readText(path));
     }
 
@@ -113,6 +144,7 @@ public class Content {
     }
 
     public static Texture2D importTexture2D(Path path) {
+        log.debug("Loading texture (2d) {}...", path);
         return awtLoader.load(path);
     }
 
@@ -130,6 +162,7 @@ public class Content {
 
     public static Mesh importMesh(Path path) {
         // TODO: To .load() from .legacyLoad().
+        log.debug("Loading mesh {}...", path);
         return objLoader.legacyLoad(path);
     }
 
@@ -146,6 +179,7 @@ public class Content {
     }
 
     public static Font importFont(Path path) {
+        log.debug("Loading font {}...", path);
         return fontLoader.load(path);
     }
 
@@ -162,7 +196,9 @@ public class Content {
     }
 
     public static Node importScene(Path path) {
-        throw new UnsupportedOperationException("Don't know how to import scene! Noooooooo!");
+        log.debug("Loading scene {}...", path);
+        GroovyScriptExecutor groovy = Application.get().getScriptExecutor();
+        return (Node) groovy.loadScene(path);
     }
 
     public static byte[] readBinary(String first, String... more) {
@@ -191,6 +227,10 @@ public class Content {
 
     public static Path getPath(String first, String... more) {
         return root.resolve(Paths.get(first, more));
+    }
+
+    public static Path getRoot() {
+        return root;
     }
 
 }
