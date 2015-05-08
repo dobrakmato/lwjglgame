@@ -42,33 +42,32 @@ public class SkyboxProgram extends Program implements IProgram {
     }
 
     @Override
-    public void setViewMatrix(Matrix4f matrix) {
-        // TODO Auto-generated method stub
-
+    public void setModelMatrix(Matrix4f model) {
+        this.setUniform("model", model);
     }
 
     @Override
-    public void setProjectionMatrix(Matrix4f matrix) {
-        // TODO Auto-generated method stub
-
+    public void setViewMatrix(Matrix4f view) {
+        this.setUniform("view", view);
     }
 
     @Override
-    public void setModelMatrix(Matrix4f matrix) {
-        // TODO Auto-generated method stub
-
+    public void setProjectionMatrix(Matrix4f projection) {
+        this.setUniform("projection", projection);
     }
 
     @Override
     public void setMaterial(Material material) {
-        // TODO Auto-generated method stub
-
+        // Invalid for this shader.
     }
 
     @Override
     public void setEyePos(Vector3f eyePos) {
-        // TODO Auto-generated method stub
+        // Invalid for this shader.
+    }
 
+    public void setCubeMap(int cubeMap) {
+        this.setUniformi("cubeMap", cubeMap);
     }
 
 }

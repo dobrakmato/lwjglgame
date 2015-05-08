@@ -46,6 +46,7 @@ import eu.matejkormuth.game.client.core.scene.nodetypes.DirectionalLight;
 import eu.matejkormuth.game.client.core.scene.nodetypes.ForwardLightSource;
 import eu.matejkormuth.game.client.core.scene.nodetypes.Model;
 import eu.matejkormuth.game.client.core.scene.nodetypes.PointLight;
+import eu.matejkormuth.game.client.core.scene.nodetypes.Skybox;
 import eu.matejkormuth.game.client.core.scene.nodetypes.SpotLight;
 import eu.matejkormuth.game.client.gl.lighting.Attenuation;
 import eu.matejkormuth.game.client.gl.pipelines.forward.PForwardAmbient;
@@ -97,6 +98,8 @@ public class Renderer {
     // Programs use in frame.
     private TIntList usedPrograms = new TIntArrayList();
     private List<ForwardLightSource> lights = new ArrayList<>();
+    // Amount of rendered frames.
+    private long renderedFrames = 0;
 
     public void load0() {
         Material basicMaterial = Content.provideMaterial("default.mat");
@@ -111,10 +114,14 @@ public class Renderer {
         int[] indices = new int[] { 0, 1, 2, 2, 3, 0 };
         Mesh planeMesh = new Mesh("plane", vertices, indices, true);
         Mesh boxMesh = Content.provideMesh("box.obj");
+        TextureCubeMap skyboxTex = Content.provideTextureCubeMap("calm");
 
         rootNode = new Node();
         rootNode.setRenderer(this);
         rootNode.setRootNode(true);
+
+        Skybox skybox = new Skybox(skyboxTex);
+        rootNode.addChild(skybox);
 
         Model plane = new Model(basicMaterial, planeMesh);
         rootNode.position = new Vector3f(0, -20, 0);
@@ -122,6 +129,7 @@ public class Renderer {
 
         Model box = new Model(basicMaterial, boxMesh);
         box.position = new Vector3f(0, 1, 20);
+        box.scale = new Vector3f(1);
         box.addComponent(new CirclePosComponent());
         rootNode.addChild(box);
 
@@ -249,6 +257,7 @@ public class Renderer {
         List<ForwardLightSource> lights = rootNode.gatherLights(this.lights);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
 
@@ -281,6 +290,7 @@ public class Renderer {
             }
 
             l.setLightUniforms();
+            
             rootNode.render(program);
         }
 
@@ -292,9 +302,11 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);
+
         this.quadRender();
         Program.unbind();
         this.renderGUI();
+        renderedFrames++;
     }
 
     private void renderGUI() {
@@ -314,6 +326,10 @@ public class Renderer {
 
     public void update() {
         rootNode.update(0);
+    }
+    
+    public long getRenderedFrames() {
+        return renderedFrames;
     }
 
     public ICamera getCamera() {

@@ -38,6 +38,7 @@ public class StdInConsole {
         dispatcher = new CommandDispatcher();
         scanner = new Scanner(System.in);
         readThread = new Thread(this::read, "Console-Thread");
+        readThread.setDaemon(false);
     }
 
     public CommandDispatcher getDispatcher() {

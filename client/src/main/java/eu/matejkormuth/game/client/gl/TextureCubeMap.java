@@ -78,4 +78,8 @@ public class TextureCubeMap implements Disposable {
         glDeleteTextures(texture);
     }
 
+    public int getTextureId() {
+        return texture;
+    }
+
 }

@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.matejkormuth.game.client.Application;
+import eu.matejkormuth.game.client.content.AWTImageBufferLoader.Meta;
 import eu.matejkormuth.game.client.content.loaders.AWTImageLoader;
 import eu.matejkormuth.game.client.content.loaders.DefaultFontLoader;
 import eu.matejkormuth.game.client.content.loaders.OBJLoader;
@@ -41,10 +42,12 @@ import eu.matejkormuth.game.client.gl.Mesh;
 import eu.matejkormuth.game.client.gl.Shader;
 import eu.matejkormuth.game.client.gl.ShaderType;
 import eu.matejkormuth.game.client.gl.Texture2D;
+import eu.matejkormuth.game.client.gl.TextureCubeMap;
 import eu.matejkormuth.game.shared.Disposable;
 import eu.matejkormuth.game.shared.scripting.GroovyScriptExecutor;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,11 +67,13 @@ public class Content {
     public static final String DIR_GUI = "gui";
     public static final String DIR_FONTS = "fonts";
     private static final String DIR_MATERIALS = "materials";
+    private static final String DIR_SKYBOXES = "skyboxes";
 
     private static Path root;
     private static ContentCache cache = new ContentCache();
 
     private static AWTImageLoader awtLoader = new AWTImageLoader();
+    private static AWTImageBufferLoader awtBuffferLoader = new AWTImageBufferLoader();
     private static OBJLoader objLoader = new OBJLoader();
     private static DefaultFontLoader fontLoader = new DefaultFontLoader();
     private static PlainTextMaterialLoader materialLoader = new PlainTextMaterialLoader();
@@ -84,8 +89,7 @@ public class Content {
             return provideMesh(more);
         } else if (value == Material.class) {
             return provideMaterial(more);
-        } 
-        else if (value == Shader.class) {
+        } else if (value == Shader.class) {
             throw new RuntimeException("Can't provide shader using this method.");
             // return provideShader(type, more);
         } else if (value == Font.class) {
@@ -231,6 +235,31 @@ public class Content {
 
     public static Path getRoot() {
         return root;
+    }
+
+    public static TextureCubeMap provideTextureCubeMap(String... more) {
+        if (cache.has(more)) {
+            return (TextureCubeMap) cache.get(more);
+        } else {
+            return (TextureCubeMap) cache.load(more, importTextureCubeMap(more));
+        }
+    }
+
+    private static TextureCubeMap importTextureCubeMap(String[] more) {
+        return importTextureCubeMap(getPath(DIR_SKYBOXES, more));
+    }
+
+    private static TextureCubeMap importTextureCubeMap(Path path) {
+        Meta outMeta = new Meta();
+        ByteBuffer posX = awtBuffferLoader.load(path.resolve("right.jpg"), outMeta);
+        ByteBuffer negX = awtBuffferLoader.load(path.resolve("left.jpg"), null);
+        ByteBuffer posY = awtBuffferLoader.load(path.resolve("top.jpg"), null);
+        ByteBuffer negY = awtBuffferLoader.load(path.resolve("bottom.jpg"), null);
+        ByteBuffer posZ = awtBuffferLoader.load(path.resolve("front.jpg"), null);
+        ByteBuffer negZ = awtBuffferLoader.load(path.resolve("back.jpg"), null);
+
+        return new TextureCubeMap(outMeta.width, outMeta.height,
+                new ByteBuffer[] { posX, negX, posY, negY, posZ, negZ });
     }
 
 }
