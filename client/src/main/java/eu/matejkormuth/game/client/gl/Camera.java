@@ -103,8 +103,8 @@ public class Camera {
         return right;
     }
 
-    public void doInput() {
-        float movAmount = 0.05f;
+    public void doInput(float delta) {
+        float movAmount = 3 * delta;
 
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
             movAmount *= 10;

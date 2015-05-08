@@ -65,7 +65,7 @@ public class Camera extends Node implements ICamera {
 
     @Override
     public void update(float delta) {
-        internal.doInput();
+        internal.doInput(delta);
     }
 
     @Override

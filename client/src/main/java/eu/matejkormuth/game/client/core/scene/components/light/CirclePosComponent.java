@@ -34,7 +34,7 @@ public class CirclePosComponent extends NodeComponent {
 
     @Override
     public void update(float delta) {
-        time += 0.12f;
+        time += 7f * delta;
         this.parent.position.x += (float) Math.sin(time) / 5;
         this.parent.position.z += (float) Math.cos(time) / 5;
     }

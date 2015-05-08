@@ -34,6 +34,7 @@ import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.BufferUtils;
 
 import eu.matejkormuth.game.shared.Disposable;
+import eu.matejkormuth.game.shared.math.Vector2f;
 import eu.matejkormuth.game.shared.math.Vector3f;
 
 import java.nio.FloatBuffer;
@@ -49,10 +50,12 @@ public class Mesh implements Disposable {
     public Mesh(String key, FloatVertex[] vertices, int[] indices, boolean calcNormals) {
         this.key = key;
         this.indices = indices.length;
-        
-        if(calcNormals) {
+
+        if (calcNormals) {
             calcNormals(vertices, indices);
         }
+
+        calcTangents(vertices, indices);
 
         // Create VAO.
         vao = glGenVertexArrays();
@@ -125,26 +128,62 @@ public class Mesh implements Disposable {
             int i0 = indices[i];
             int i1 = indices[i + 1];
             int i2 = indices[i + 2];
-            
+
             Vector3f v1 = vertices[i1].getPos().subtract(vertices[i0].getPos());
             Vector3f v2 = vertices[i2].getPos().subtract(vertices[i0].getPos());
-            
+
             Vector3f normal = v1.cross(v2).normalize();
-            
+
             vertices[i0].setNormal(vertices[i0].getNormal().add(normal));
             vertices[i1].setNormal(vertices[i1].getNormal().add(normal));
             vertices[i2].setNormal(vertices[i2].getNormal().add(normal));
         }
-        
-        for(int i = 0; i < vertices.length; i++) {
+
+        for (int i = 0; i < vertices.length; i++) {
             vertices[i].setNormal(vertices[i].getNormal().normalize());
+        }
+    }
+
+    private void calcTangents(FloatVertex[] vertices, int[] indices) {
+        for (int i = 0; i < indices.length; i += 3) {
+            FloatVertex v0 = vertices[indices[i]];
+            FloatVertex v1 = vertices[indices[i + 1]];
+            FloatVertex v2 = vertices[indices[i + 2]];
+            
+            Vector3f edge1 = v1.getPos().subtract(v0.getPos());
+            Vector3f edge2 = v2.getPos().subtract(v0.getPos());
+            
+            Vector2f v0tex = v0.getTexCoords();
+            Vector2f v1tex = v1.getTexCoords();
+            Vector2f v2tex = v2.getTexCoords();
+            
+            float deltaU1 = v1tex.x - v0tex.x;
+            float deltaV1 = v1tex.y - v0tex.y;
+            float deltaU2 = v2tex.x - v0tex.x;
+            float deltaV2 = v2tex.y - v0tex.y;
+
+            float f = 1.0f / (deltaU1 * deltaV2 - deltaU2 * deltaV1);
+
+            Vector3f tangent = new Vector3f();
+
+            tangent.x = f * (deltaV2 * edge1.x - deltaV1 * edge2.x);
+            tangent.y = f * (deltaV2 * edge1.y - deltaV1 * edge2.y);
+            tangent.z = f * (deltaV2 * edge1.z - deltaV1 * edge2.z);
+
+            v0.setTangent(v0.getTangent().add(tangent));
+            v1.setTangent(v1.getTangent().add(tangent));
+            v2.setTangent(v2.getTangent().add(tangent));
+        }
+
+        for (int i = 0; i < vertices.length; i++) {
+            vertices[i].setTangent(vertices[i].getTangent().normalize());
         }
     }
 
     public String getKey() {
         return key;
     }
-    
+
     @Override
     public void dispose() {
         glDeleteBuffers(vbo);

@@ -53,6 +53,7 @@ public class PForwardDirectional extends Program implements IProgram {
         setUniformf("directionalLight.base.intensity", intensity);
     }
 
+    @Override
     public void setEyePos(Vector3f position) {
         this.setUniform("eyePos", position);
     }
@@ -77,5 +78,6 @@ public class PForwardDirectional extends Program implements IProgram {
         this.setUniformf("specularIntensity", material.getSpecularIntensity());
         this.setUniformf("specularPower", material.getSpecularPower());
         material.getDiffuse().bind(0);
+        material.getNormalMap().bind(1);
     }
 }

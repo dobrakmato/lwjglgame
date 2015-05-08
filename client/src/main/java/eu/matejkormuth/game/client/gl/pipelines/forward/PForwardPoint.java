@@ -100,5 +100,6 @@ public class PForwardPoint extends Program implements IProgram {
         this.setUniformf("specularIntensity", material.getSpecularIntensity());
         this.setUniformf("specularPower", material.getSpecularPower());
         material.getDiffuse().bind(0);
+        material.getNormalMap().bind(1);
     }
 }

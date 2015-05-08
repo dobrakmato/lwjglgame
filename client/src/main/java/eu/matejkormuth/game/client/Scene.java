@@ -143,6 +143,6 @@ public class Scene {
     }
 
     public void update() {
-        camera.doInput();
+        camera.doInput(0);
     }
 }

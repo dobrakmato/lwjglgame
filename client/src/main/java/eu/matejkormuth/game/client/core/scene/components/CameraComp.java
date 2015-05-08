@@ -34,7 +34,7 @@ public class CameraComp extends NodeComponent {
     
     @Override
     public void update(float delta) {
-        time += 0.12f;
+        time += 7 * delta;
         
         this.parent.rotation.y = (float) (Math.sin(time) - 1) / 2;
     }

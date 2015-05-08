@@ -87,7 +87,10 @@ public class Window {
     }
 
     public void doUpdate() {
+        long startTime = 0;
+        float took = 0;
         while (!shuttingDown) {
+            startTime = System.nanoTime();
             // Check for window close event.
             if (Display.isCloseRequested()) {
                 this.shuttingDown = true;
@@ -95,15 +98,18 @@ public class Window {
                 break;
             }
 
-            Display.setTitle(this.renderer.getCamera().getPosition().toString() + " | " + this.renderer.getCamera().getRotation().toString());
-            
-            // Update.
-            this.renderer.update();
+            Display.setTitle(this.renderer.getCamera().getPosition().toString() + " | "
+                    + this.renderer.getCamera().getRotation().toString());
+
             // Render.
             this.renderer.render();
             // Swap buffers.
             Display.update();
-            //Display.sync(60);
+            // Update.
+            took = (System.nanoTime() - startTime) / 1000000000F;
+            this.renderer.update(took);
+
+            // Display.sync(60);
         }
     }
 

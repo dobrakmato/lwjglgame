@@ -3,6 +3,7 @@
 in vec2 texCoord0;
 in vec3 worldPos0;
 in vec3 normal0;
+in vec3 tangent0;
 
 struct BaseLight {
 	vec3 color;
@@ -17,6 +18,7 @@ struct DirectionalLight {
 uniform float specularIntensity;
 uniform float specularPower;
 uniform sampler2D diffuse;
+uniform sampler2D normalMap;
 uniform vec3 eyePos;
 uniform mat4 model;
 uniform DirectionalLight directionalLight;
@@ -45,6 +47,17 @@ vec4 calcDirectionalLight(DirectionalLight directionalLight, vec3 normal) {
 	return calcLight(directionalLight.base, -directionalLight.direction, normal);
 }
 
+vec3 calcBumpedNormal() {
+	vec3 tangent = normalize(tangent0 - dot(tangent0, normal0) * normal0);
+	vec3 bitangent = cross(tangent, normal0);
+	vec3 bumpMapNormal = texture(normalMap, texCoord0).xyz;
+	bumpMapNormal = 2.0 * bumpMapNormal - vec3(1, 1, 1);
+	mat3 TBN = mat3(tangent, bitangent, normal0);
+	vec3 newNormal = TBN * bumpMapNormal;
+	newNormal = normalize(newNormal);
+	return newNormal;
+}
+
 void main() {
-	gl_FragColor = texture(diffuse, texCoord0.xy) * calcDirectionalLight(directionalLight, normal0);
+	gl_FragColor = texture(diffuse, texCoord0.xy) * calcDirectionalLight(directionalLight, calcBumpedNormal());
 }

@@ -142,7 +142,7 @@ public class Renderer {
                 PointLight pointLight0 = new PointLight(new Attenuation(0, 0, 1), new Color3f(i / (float) k, 1f, j
                         / (float) k), 1f);
                 pointLight0.position = new Vector3f(-20 + i * 4, 1, -20 + j * 4);
-                pointLight0.addComponent(new CirclePosComponent());
+                // pointLight0.addComponent(new CirclePosComponent());
                 rootNode.addChild(pointLight0);
             }
         }
@@ -324,8 +324,8 @@ public class Renderer {
         glBindVertexArray(0);
     }
 
-    public void update() {
-        rootNode.update(0);
+    public void update(float took) {
+        rootNode.update(took);
     }
     
     public long getRenderedFrames() {

@@ -85,6 +85,10 @@ public class FloatVertex {
         return data;
     }
 
+    public Vector2f getTexCoords() {
+        return new Vector2f(this.data[3], this.data[4]);
+    }
+    
     public Vector3f getPos() {
         return new Vector3f(this.data[0], this.data[1], this.data[2]);
     }
