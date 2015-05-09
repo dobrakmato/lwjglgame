@@ -65,10 +65,11 @@ vec4 calcPointLight(PointLight pointLight, vec3 normal) {
 	float attenuation = pointLight.atten.constant + pointLight.atten.linear * distanceToPoint + pointLight.atten.quadratic * distanceToPoint * distanceToPoint + 0.0001;
 	return color / attenuation;
 }
-
 vec3 calcBumpedNormal() {
-	vec3 tangent = normalize(tangent0 - dot(tangent0, normal0) * normal0);
-	vec3 bitangent = cross(tangent, normal0);
+	vec3 normal = normalize(normal0);
+	vec3 tangent = normalize(tangent0);
+	tangent = normalize(tangent - dot(tangent, normal) * normal);
+	vec3 bitangent = cross(tangent, normal);
 	vec3 bumpMapNormal = texture(normalMap, texCoord0).xyz;
 	bumpMapNormal = 2.0 * bumpMapNormal - vec3(1, 1, 1);
 	mat3 TBN = mat3(tangent, bitangent, normal0);

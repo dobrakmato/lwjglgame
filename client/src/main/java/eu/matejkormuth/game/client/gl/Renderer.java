@@ -187,7 +187,6 @@ public class Renderer {
 
         // Enable depth test.
         glEnable(GL_DEPTH_TEST);
-        // glDepthFunc(GL_ALWAYS);
 
         // Enable texturing.
         glEnable(GL_TEXTURE_2D);
@@ -290,7 +289,7 @@ public class Renderer {
             }
 
             l.setLightUniforms();
-            
+
             rootNode.render(program);
         }
 
@@ -327,7 +326,7 @@ public class Renderer {
     public void update(float took) {
         rootNode.update(took);
     }
-    
+
     public long getRenderedFrames() {
         return renderedFrames;
     }
