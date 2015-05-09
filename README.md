@@ -12,32 +12,35 @@ Build with `mvn package`.
 - [x] Forward rendering 
 - [x] Phong shading
 - [x] Normal mapping
-- [] Specular mapping
-- [] Shadows
-- [] Light maps
-- [] Shadow maps
-- [] Billboarding
-- [] Particle system
-- [] Rendered skyboxes
+- [x] Specular mapping
+- [ ] Shadows
+- [ ] Light maps
+- [ ] Shadow maps
+- [ ] Billboarding
+- [ ] Particle system
+- [ ] Rendered skyboxes
 - [x] Cubemap skyboxes
-- [] Reflections
-- [] Refractions
-- [] Billboarding
-- [] Tesselation
-- [] Instanced rendering & grass
-- [] Deffered shading
-- [] FXAA
-- [] SSAO
-- [] Skeletal animation
-- [] Fog
-- [] Motion blur
+- [ ] Reflections
+- [ ] Refractions
+- [ ] Billboarding
+- [ ] Tesselation
+- [ ] Instanced rendering & grass
+- [ ] Deffered shading
+- [ ] FXAA
+- [ ] SSAO
+- [ ] Skeletal animation
+- [ ] Fog
+- [ ] Motion blur
 
-- [] Trees and foliage
-- [] Water
-- [] Lens flare
-- [] Clouds
-- [] Rain effects
-- [] Snow effects
+- [ ] Trees and foliage
+- [ ] Water
+- [ ] Lens flare
+- [ ] Clouds
+- [ ] Rain effects
+- [ ] Snow effects
 
+- [ ] Ropes
+- [ ] Wind
+- [ ] Physics
 
 ![](http://i.imgur.com/ThCk7Lx.png)

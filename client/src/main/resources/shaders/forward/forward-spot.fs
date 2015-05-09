@@ -33,6 +33,7 @@ uniform float specularIntensity;
 uniform float specularPower;
 uniform sampler2D diffuse;
 uniform sampler2D normalMap;
+uniform sampler2D specularMap;
 uniform vec3 eyePos;
 uniform mat4 model;
 uniform SpotLight spotLight;
@@ -50,7 +51,7 @@ vec4 calcLight(BaseLight base, vec3 direction, vec3 normal) {
 		float specularFactor = dot(directionToEye, reflectDirection);
 		specularFactor = pow(specularFactor, specularPower);
 		if(specularFactor > 0) {
-			specularColor = vec4(base.color, 1) * specularIntensity * specularFactor;
+			specularColor = vec4(base.color, 1) * specularIntensity * specularFactor * texture(specularMap, texCoord0.xy).r;
 		}
 	}
 	

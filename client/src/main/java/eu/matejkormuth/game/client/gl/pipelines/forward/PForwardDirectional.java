@@ -79,7 +79,9 @@ public class PForwardDirectional extends Program implements IProgram {
         this.setUniformf("specularPower", material.getSpecularPower());
         this.setUniformi("diffuse", 0);
         this.setUniformi("normalMap", 1);
+        this.setUniformi("specularMap", 2);
         material.getDiffuse().bind(0);
         material.getNormalMap().bind(1);
+        material.getSpecularMap().bind(2);
     }
 }
