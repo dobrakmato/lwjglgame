@@ -36,6 +36,17 @@ public class Quaternion {
     public Quaternion() {
     }
 
+    public Quaternion(Vector3f axis, float degrees) {
+        float sinHalf = FastMath.sin(degrees / 2);
+        float cosHalf = FastMath.cos(degrees / 2);
+
+        this.x = axis.x * sinHalf;
+        this.y = axis.y * sinHalf;
+        this.z = axis.z * sinHalf;
+        this.w = cosHalf;
+
+    }
+
     public Quaternion(float x, float y, float z, float w) {
         this.x = x;
         this.y = y;
@@ -60,6 +71,18 @@ public class Quaternion {
 
     public Quaternion conjugate() {
         return new Quaternion(-x, -y, -z, w);
+    }
+
+    public float dot(Quaternion q) {
+        return this.x * q.x + this.y * q.y + this.z * q.z + this.w * q.w;
+    }
+
+    public Quaternion add(Quaternion q) {
+        return new Quaternion(this.x + q.x, this.y + q.y, this.z + q.z, this.w + q.w);
+    }
+
+    public Quaternion subtract(Quaternion q) {
+        return new Quaternion(this.x - q.x, this.y - q.y, this.z - q.z, this.w - q.w);
     }
 
     public Quaternion multiply(Quaternion q) {

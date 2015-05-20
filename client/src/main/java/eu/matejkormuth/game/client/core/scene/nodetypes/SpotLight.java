@@ -32,7 +32,6 @@ import eu.matejkormuth.game.client.gl.IProgram;
 import eu.matejkormuth.game.client.gl.lighting.Attenuation;
 import eu.matejkormuth.game.client.gl.pipelines.forward.PForwardSpot;
 import eu.matejkormuth.game.shared.math.Color3f;
-import eu.matejkormuth.game.shared.math.Vector3f;
 
 public class SpotLight extends Node implements ForwardLightSource {
 
@@ -41,11 +40,10 @@ public class SpotLight extends Node implements ForwardLightSource {
     public SpotLight() {
     }
 
-    public SpotLight(Attenuation attenuation, Color3f color, float intensity, Vector3f direction, float cutoff) {
+    public SpotLight(Attenuation attenuation, Color3f color, float intensity, float cutoff) {
         this.attenuation = attenuation;
         this.color = color;
         this.intensity = intensity;
-        this.rotation = direction;
         this.cutoff = cutoff;
     }
 

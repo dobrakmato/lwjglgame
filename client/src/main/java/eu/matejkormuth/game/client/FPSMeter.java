@@ -24,25 +24,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.al.codecs;
+package eu.matejkormuth.game.client;
 
-import eu.matejkormuth.game.client.al.SoundBuffer;
+public class FPSMeter {
 
-import java.nio.file.Path;
+    private static final float ONE_SECOND = 1000F;
+    private static final float NS_TO_MS = 1000000F;
 
-public class WAVCodec implements Codec {
+    private int fps;
+    private long lastFrame;
 
-    private static final String EXTENSION = ".wav";
-
-    @Override
-    public String getExtension() {
-        return EXTENSION;
+    public void frame() {
+        long currentFrame = System.nanoTime();
+        long time = currentFrame - this.lastFrame;
+        this.lastFrame = currentFrame;
+        this.fps = (int) (ONE_SECOND / (time / NS_TO_MS));
     }
 
-    @Override
-    public SoundBuffer decode(Path path) {
-        // TODO Auto-generated method stub
-        return null;
+    public int getFPS() {
+        return this.fps;
     }
-
 }

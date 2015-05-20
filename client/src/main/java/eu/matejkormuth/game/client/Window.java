@@ -40,6 +40,7 @@ public class Window {
 
     private static final Logger log = LoggerFactory.getLogger(Window.class);
 
+    private FPSMeter fpsMeter;
     private String title = "Game";
     private int width = Application.get().getConfiguration().getDisplayWidth();
     private int height = Application.get().getConfiguration().getDisplayHeight();
@@ -51,6 +52,8 @@ public class Window {
     private Renderer renderer;
 
     public Window() {
+        this.fpsMeter = new FPSMeter();
+
         log.info("Initializing display...");
         log.info(" Adapter: " + Display.getAdapter());
         log.info(" Version: " + Display.getVersion());
@@ -98,12 +101,14 @@ public class Window {
                 break;
             }
 
-            Display.setTitle(this.renderer.getCamera().getPosition().toString() + " | "
+            Display.setTitle("FPS: " + this.fpsMeter.getFPS() + " | "
+                    + this.renderer.getCamera().getPosition().toString() + " | "
                     + this.renderer.getCamera().getRotation().toString());
 
             // Render.
             this.renderer.render();
             // Swap buffers.
+            this.fpsMeter.frame();
             Display.update();
             // Update.
             took = (System.nanoTime() - startTime) / 1000000000F;

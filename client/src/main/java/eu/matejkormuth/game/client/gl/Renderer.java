@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import eu.matejkormuth.game.client.content.Content;
 import eu.matejkormuth.game.client.core.scene.Node;
 import eu.matejkormuth.game.client.core.scene.components.light.CirclePosComponent;
+import eu.matejkormuth.game.client.core.scene.components.light.TorchLightEffect;
 import eu.matejkormuth.game.client.core.scene.nodetypes.Camera;
 import eu.matejkormuth.game.client.core.scene.nodetypes.DirectionalLight;
 import eu.matejkormuth.game.client.core.scene.nodetypes.ForwardLightSource;
@@ -103,6 +104,9 @@ public class Renderer {
 
     public void load0() {
         Material basicMaterial = Content.provideMaterial("default.mat");
+        Material bricksMaterial = Content.provideMaterial("bricks.mat");
+        Material gravelMaterial = Content.provideMaterial("gravel.mat");
+        Material grassMaterial = Content.provideMaterial("grass.mat");
 
         FloatVertex[] vertices = new FloatVertex[] { //
         new FloatVertex(new Vector3f(-40, 0, -40), new Vector2f(0, 0)),// 0
@@ -114,7 +118,7 @@ public class Renderer {
         int[] indices = new int[] { 0, 1, 2, 2, 3, 0 };
         Mesh planeMesh = new Mesh("plane", vertices, indices, true);
         Mesh boxMesh = Content.provideMesh("box.obj");
-        TextureCubeMap skyboxTex = Content.provideTextureCubeMap("calm");
+        TextureCubeMap skyboxTex = Content.provideTextureCubeMap("space2");
 
         rootNode = new Node();
         rootNode.setRenderer(this);
@@ -123,20 +127,31 @@ public class Renderer {
         Skybox skybox = new Skybox(skyboxTex);
         rootNode.addChild(skybox);
 
-        Model plane = new Model(basicMaterial, planeMesh);
+        Model plane = new Model(grassMaterial, planeMesh);
         rootNode.position = new Vector3f(0, -20, 0);
         rootNode.addChild(plane);
 
+        Model plane2 = new Model(bricksMaterial, planeMesh);
+        plane2.rotation = new Vector3f(90, 0, 0);
+        plane2.position = new Vector3f(0, 0, 0);
+        rootNode.addChild(plane2);
+
+        Model plane3 = new Model(basicMaterial, planeMesh);
+        plane3.position = new Vector3f(-25, 1, 0.5f);
+        plane3.rotation = new Vector3f(45, 0, 0);
+        plane3.scale = new Vector3f(0.025f);
+        rootNode.addChild(plane3);
+        
         Model box = new Model(basicMaterial, boxMesh);
         box.position = new Vector3f(0, 1, 20);
         box.scale = new Vector3f(1);
         box.addComponent(new CirclePosComponent());
         rootNode.addChild(box);
 
-        DirectionalLight dirLight = new DirectionalLight(Color3f.WHITE.darker(0.7f), 0.7f, new Vector3f(1));
+        DirectionalLight dirLight = new DirectionalLight(Color3f.WHITE.darker(0.7f), 0.01f, new Vector3f(1));
         rootNode.addChild(dirLight);
 
-        int k = 5;
+        int k = 0;
         for (int i = 0; i < k; i++) {
             for (int j = 0; j < k; j++) {
                 PointLight pointLight0 = new PointLight(new Attenuation(0, 0, 1), new Color3f(i / (float) k, 1f, j
@@ -147,12 +162,16 @@ public class Renderer {
             }
         }
 
-        SpotLight flashLight = new SpotLight(new Attenuation(1, .04f, .004f), Color3f.CYAN, 1, new Vector3f(0, -.5f,
-                .75f), 0.7f);
+        SpotLight flashLight = new SpotLight(new Attenuation(1.0f, 0.07f, 0.017f), Color3f.CYAN, 4, 0.7f);
         // flashLight.addComponent(new CameraComp());
-        flashLight.position = new Vector3f(-30, 1, 5);
-        flashLight.rotation = new Vector3f(0, -.5f, .75f);
+        flashLight.position = new Vector3f(-30, 5, 12);
+        flashLight.rotation = new Vector3f(0, -.5f, -.75f);
         rootNode.addChild(flashLight);
+        
+        PointLight pointLight0 = new PointLight(new Attenuation(1.0f, 0.07f, 0.017f), Color3f.YELLOW, 1f);
+        pointLight0.position = new Vector3f(-20, 5, 1);
+        pointLight0.addComponent(new TorchLightEffect());
+        rootNode.addChild(pointLight0);
 
         PointLight pointLight1 = new PointLight(new Attenuation(0, 0, 1), Color3f.BLUE, 1f);
         pointLight1.position = new Vector3f(0, 1, 10);

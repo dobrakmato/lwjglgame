@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.matejkormuth.game.client.Application;
+import eu.matejkormuth.game.client.al.SoundBuffer;
+import eu.matejkormuth.game.client.al.codecs.WAVCodec;
 import eu.matejkormuth.game.client.content.AWTImageBufferLoader.Meta;
 import eu.matejkormuth.game.client.content.loaders.AWTImageLoader;
 import eu.matejkormuth.game.client.content.loaders.DefaultFontLoader;
@@ -60,7 +62,7 @@ public class Content {
 
     public static final String DIR_TEXTURES = "textures";
     public static final String DIR_MODELS = "models";
-    public static final String DIR_SOUND = "sounds";
+    public static final String DIR_SOUNDS = "sounds";
     public static final String DIR_SCRIPTS = "scripts";
     public static final String DIR_SHADERS = "shaders";
     public static final String DIR_LEVELS = "levels";
@@ -78,6 +80,9 @@ public class Content {
     private static DefaultFontLoader fontLoader = new DefaultFontLoader();
     private static PlainTextMaterialLoader materialLoader = new PlainTextMaterialLoader();
 
+    private static WAVCodec wavCodec = new WAVCodec();
+    private static AudioLoader audioLoader = new AudioLoader(wavCodec);
+
     public static void setRoot(Path path) {
         root = path;
     }
@@ -94,11 +99,29 @@ public class Content {
             // return provideShader(type, more);
         } else if (value == Font.class) {
             return provideFont(more);
+        } else if (value == SoundBuffer.class) {
+            return provideSound(more);
         }
         // TODO: More content types.
         else {
             throw new UnsupportedOperationException("Can't provide resource for type: " + value.getName());
         }
+    }
+
+    private static SoundBuffer provideSound(String... more) {
+        if (cache.has(more)) {
+            return (SoundBuffer) cache.get(more);
+        } else {
+            return (SoundBuffer) cache.load(more, importSound(more));
+        }
+    }
+
+    private static SoundBuffer importSound(String[] more) {
+        return importSound(getPath(DIR_SOUNDS, more));
+    }
+
+    private static SoundBuffer importSound(Path path) {
+        return audioLoader.load(path);
     }
 
     public static Material provideMaterial(String... more) {

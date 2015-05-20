@@ -24,25 +24,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package eu.matejkormuth.game.client.al.codecs;
+package eu.matejkormuth.game.client.content;
 
 import eu.matejkormuth.game.client.al.SoundBuffer;
+import eu.matejkormuth.game.client.al.codecs.Codec;
 
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
-public class WAVCodec implements Codec {
+public class AudioLoader extends ContentLoader<SoundBuffer> {
 
-    private static final String EXTENSION = ".wav";
+    private Map<String, Codec> codecs = new HashMap<>();
 
-    @Override
-    public String getExtension() {
-        return EXTENSION;
+    public AudioLoader(Codec... codecs) {
+        for (Codec c : codecs) {
+            this.codecs.put(c.getExtension(), c);
+        }
     }
 
     @Override
-    public SoundBuffer decode(Path path) {
-        // TODO Auto-generated method stub
-        return null;
+    public SoundBuffer load(Path path) {
+        String ext = path.toString().substring(path.toString().lastIndexOf("."));
+        if (codecs.containsKey(ext)) {
+            return codecs.get(ext).decode(path);
+        } else {
+            throw new UnsupportedOperationException("Can't decode " + ext + " file!");
+        }
     }
 
 }

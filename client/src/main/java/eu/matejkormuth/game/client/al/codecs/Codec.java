@@ -30,19 +30,10 @@ import eu.matejkormuth.game.client.al.SoundBuffer;
 
 import java.nio.file.Path;
 
-public class WAVCodec implements Codec {
+public interface Codec {
 
-    private static final String EXTENSION = ".wav";
+    String getExtension();
 
-    @Override
-    public String getExtension() {
-        return EXTENSION;
-    }
-
-    @Override
-    public SoundBuffer decode(Path path) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    SoundBuffer decode(Path path);
 
 }
