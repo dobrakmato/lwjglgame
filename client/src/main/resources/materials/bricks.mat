@@ -1,0 +1,5 @@
+diffuse = bricks.jpg
+normalMap = bricks_n.png
+specularMap = bricks_s.png
+specularPower = 2
+specularIntensity = 1

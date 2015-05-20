@@ -1,0 +1,5 @@
+diffuse = gravel.jpg
+normalMap = gravel_n.png
+specularMap = gravel_s.png
+specularPower = 2
+specularIntensity = 1

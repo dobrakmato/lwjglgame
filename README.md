@@ -7,7 +7,10 @@ Main purpose is to learn OpenGL, OpenAL and game programming things.
 
 Build with `mvn package`.
 
-### Things
+![](http://i.imgur.com/d3lTOf1.jpg)
+![](http://i.imgur.com/ThCk7Lx.png)
+
+### Plan
 
 - [x] Forward rendering 
 - [x] Phong shading
@@ -43,4 +46,3 @@ Build with `mvn package`.
 - [ ] Wind
 - [ ] Physics
 
-![](http://i.imgur.com/ThCk7Lx.png)

@@ -1,0 +1,5 @@
+diffuse = grass.jpg
+normalMap = grass_n.png
+specularMap = grass_s.png
+specularPower = 2
+specularIntensity = 1
